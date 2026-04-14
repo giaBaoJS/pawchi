@@ -1,0 +1,32 @@
+@import 'tailwindcss/theme';
+@import 'uniwind';
+@import 'heroui-native/styles';
+
+@theme {
+  /* ─── Surfaces ─────────────────────────────────────────── */
+  --color-background: #FFF9FB;
+  --color-card: #FFF0F5;
+  --color-card-alt: #FFE4EC;
+
+  /* ─── Brand ─────────────────────────────────────────────── */
+  --color-primary: #FFAFCC;
+  --color-danger: #FF8FAB;
+  --color-success: #B9E4C9;
+  --color-warning: #FFE9A8;
+  --color-info: #BDE0FE;
+
+  /* ─── Stat Colors ───────────────────────────────────────── */
+  --color-hunger: #FFCBA4;
+  --color-mood: #B9E4C9;
+  --color-energy: #BDE0FE;
+  --color-bond: #FFAFCC;
+  --color-personality: #D8C8F6;
+
+  /* ─── Text ──────────────────────────────────────────────── */
+  --color-foreground: #5A4A54;
+  --color-foreground-secondary: #8B7A82;
+  --color-muted: #C9B8BE;
+
+  /* ─── Border ────────────────────────────────────────────── */
+  --color-border: #F2D8E1;
+}

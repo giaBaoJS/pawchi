@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(openspec list:*)",
+      "Bash(mkdir -p /Users/paulnguyen/Documents/Personal/pawchi/assets/avatars)",
+      "Bash(cp ../images/icon.png __TRACKED_VAR__.png)",
+      "Bash(git stash:*)"
+    ],
+    "additionalDirectories": [
+      "/tmp"
+    ]
+  }
+}
