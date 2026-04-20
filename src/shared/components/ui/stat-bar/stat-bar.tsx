@@ -1,25 +1,38 @@
-import { Canvas, RoundedRect, Paint } from '@shopify/react-native-skia';
+import { Canvas, Paint, RoundedRect } from '@shopify/react-native-skia';
 import { useEffect } from 'react';
-import { View, Text } from 'react-native';
+import { Text, View } from 'react-native';
 import Animated, {
-  useSharedValue,
-  withSpring,
-  withRepeat,
-  withTiming,
   useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withSpring,
+  withTiming,
 } from 'react-native-reanimated';
+import { useCSSVariable } from 'uniwind';
 import { cn } from '@lib/cn';
+
+export type StatTone = 'hunger' | 'mood' | 'energy' | 'bond' | 'personality';
 
 interface StatBarProps {
   label: string;
   value: number;
-  color: string;
+  tone: StatTone;
 }
 
-const BAR_HEIGHT = 10;
-const BAR_WIDTH = 200;
+const TONE_TO_VAR: Record<StatTone, string> = {
+  hunger: '--color-hunger',
+  mood: '--color-mood',
+  energy: '--color-energy',
+  bond: '--color-bond',
+  personality: '--color-personality',
+};
 
-export function StatBar({ label, value, color }: StatBarProps) {
+const BAR_HEIGHT = 12;
+const BAR_WIDTH = 220;
+
+export function StatBar({ label, value, tone }: StatBarProps) {
+  const fillColor = useCSSVariable(TONE_TO_VAR[tone]) as string;
+  const trackColor = useCSSVariable('--color-border-soft') as string;
   const fillWidth = useSharedValue((value / 100) * BAR_WIDTH);
   const pulseOpacity = useSharedValue(1);
   const isWarning = value < 25;
@@ -33,7 +46,7 @@ export function StatBar({ label, value, color }: StatBarProps) {
 
   useEffect(() => {
     if (isWarning) {
-      pulseOpacity.value = withRepeat(withTiming(0.4, { duration: 600 }), -1, true);
+      pulseOpacity.value = withRepeat(withTiming(0.45, { duration: 600 }), -1, true);
     } else {
       pulseOpacity.value = withTiming(1);
     }
@@ -44,31 +57,30 @@ export function StatBar({ label, value, color }: StatBarProps) {
   }));
 
   return (
-    <View className="gap-1">
-      <Text className="text-foreground-secondary text-xs font-semibold">{label}</Text>
-      <View className="flex-row items-center gap-2">
-        <Animated.View style={animatedStyle}>
-          <Canvas style={{ width: BAR_WIDTH, height: BAR_HEIGHT }}>
-            {/* Track */}
-            <RoundedRect x={0} y={0} width={BAR_WIDTH} height={BAR_HEIGHT} r={BAR_HEIGHT / 2}>
-              <Paint color="#F2D8E1" />
-            </RoundedRect>
-            {/* Fill — driven by shared value via Skia prop */}
-            <RoundedRect
-              x={0}
-              y={0}
-              width={fillWidth}
-              height={BAR_HEIGHT}
-              r={BAR_HEIGHT / 2}
-            >
-              <Paint color={color} />
-            </RoundedRect>
-          </Canvas>
-        </Animated.View>
-        <Text className={cn('text-xs font-bold w-8 text-right', isWarning ? 'text-danger' : 'text-foreground-secondary')}>
+    <View className="gap-1.5">
+      <View className="flex-row items-center justify-between">
+        <Text className="text-foreground-secondary text-xs font-semibold uppercase tracking-wider">
+          {label}
+        </Text>
+        <Text
+          className={cn(
+            'text-xs font-extrabold',
+            isWarning ? 'text-danger' : 'text-foreground',
+          )}
+        >
           {Math.round(value)}
         </Text>
       </View>
+      <Animated.View style={animatedStyle}>
+        <Canvas style={{ width: BAR_WIDTH, height: BAR_HEIGHT }}>
+          <RoundedRect x={0} y={0} width={BAR_WIDTH} height={BAR_HEIGHT} r={BAR_HEIGHT / 2}>
+            <Paint color={trackColor} />
+          </RoundedRect>
+          <RoundedRect x={0} y={0} width={fillWidth} height={BAR_HEIGHT} r={BAR_HEIGHT / 2}>
+            <Paint color={fillColor} />
+          </RoundedRect>
+        </Canvas>
+      </Animated.View>
     </View>
   );
 }

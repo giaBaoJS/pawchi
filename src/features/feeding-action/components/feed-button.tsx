@@ -1,6 +1,9 @@
-import { Pressable, Text } from 'react-native';
-import { useFeeding } from '../hooks/use-feeding';
+import { Ionicons } from '@expo/vector-icons';
 import { FEED_COST_BONES } from '@features/gamification/constants';
+import { Pressable, Text, View } from 'react-native';
+import { useCSSVariable } from 'uniwind';
+import { cn } from '@lib/cn';
+import { useFeeding } from '../hooks/use-feeding';
 
 interface FeedButtonProps {
   onFed?: () => void;
@@ -15,6 +18,8 @@ function formatCooldown(ms: number): string {
 
 export function FeedButton({ onFed }: FeedButtonProps) {
   const { canFeed, cooldownRemainingMs, feed } = useFeeding();
+  const activeColor = useCSSVariable('--color-hunger') as string;
+  const mutedColor = useCSSVariable('--color-muted') as string;
 
   function handlePress() {
     if (!canFeed) return;
@@ -22,22 +27,29 @@ export function FeedButton({ onFed }: FeedButtonProps) {
     if (result.ok) onFed?.();
   }
 
-  const label = canFeed
-    ? `Feed (${FEED_COST_BONES} 🦴)`
-    : `Ready in ${formatCooldown(cooldownRemainingMs)}`;
+  const label = canFeed ? `Feed · ${FEED_COST_BONES}` : formatCooldown(cooldownRemainingMs);
 
   return (
     <Pressable
       onPress={handlePress}
       disabled={!canFeed}
-      className={`flex-1 rounded-2xl py-4 items-center ${
-        canFeed ? 'bg-primary' : 'bg-card'
-      }`}
+      className={cn(
+        'flex-1 rounded-3xl py-4 items-center justify-center gap-1 border',
+        canFeed ? 'bg-overlay border-border-soft' : 'bg-overlay-soft border-border-soft',
+      )}
     >
+      <View className="flex-row items-center gap-1">
+        <Ionicons
+          name="restaurant"
+          size={26}
+          color={canFeed ? activeColor : mutedColor}
+        />
+      </View>
       <Text
-        className={`font-extrabold text-base ${
-          canFeed ? 'text-white' : 'text-foreground-secondary'
-        }`}
+        className={cn(
+          'font-extrabold text-sm',
+          canFeed ? 'text-foreground' : 'text-foreground-secondary',
+        )}
       >
         {label}
       </Text>

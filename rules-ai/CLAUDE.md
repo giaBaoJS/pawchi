@@ -6,13 +6,14 @@ This file provides guidance to Claude Code when working with this repository.
 
 - **Start dev server:** `npx expo start`
 - **iOS:** `expo run ios`
+- **Android:** `expo run android`
 - **Lint:** `expo lint` (eslint 9 flat config via eslint-config-expo)
 - **Type check:** `npx tsc --noEmit`
-- **Prebuild (after native changes):** `npx expo prebuild --clean --platform ios`
+- **Prebuild (after native changes):** `npx expo prebuild --clean`
 
 ## Architecture
 
-Expo SDK 55 app with Expo Router v7 (file-based routing), React Native 0.83.2, React 19.2. New Architecture enabled. **iOS-only** — HealthKit is Apple-only, no Android native code.
+Pawchi — a kawaii virtual dog companion app. Real-life dog care (walking, feeding) + gamification + cute 2D pet. Expo SDK 55 app with Expo Router v7 (file-based routing), React Native 0.83.4, React 19.2. New Architecture enabled. **Cross-platform iOS and Android.** Walk tracking uses `expo-location` (GPS + haversine), no HealthKit.
 
 ### Installed Dependencies
 
@@ -22,41 +23,52 @@ Already in project — do NOT re-install:
 - `react-native-gesture-handler` ~2.30.0
 - `react-native-worklets` 0.7.2
 - `react-native-screens`, `react-native-safe-area-context`
+- `react-native-mmkv` — Synchronous key-value storage (backs Zustand persistence)
+- `zustand` — Client state with `persist` middleware
+- `date-fns` — Date math for streaks and decay
 - `expo-image` (use via `@shared/components/styled` wrapper — better caching and Uniwind className support)
+- `expo-location` — GPS tracking for walks (foreground only)
+- `expo-linear-gradient` — Kawaii gradient backdrops
+- `@expo/vector-icons` — Ionicons for consistent icons (replaces emojis)
 - `expo-haptics`, `expo-router`, `@react-navigation/bottom-tabs`
 - `uniwind` — Tailwind CSS v4 for React Native (className-based styling)
 - `heroui-native` — Pre-built compound UI components (Button, Dialog, BottomSheet, Toast, Spinner)
 - `tailwind-variants` — Variant-based className composition via `tv()`
 - `tailwind-merge` + `clsx` — className merging via `cn()` utility
 - `@legendapp/list` — High-performance list (replaces FlatList)
-- `@tanstack/react-query` v5 — Server state management
+- `@tanstack/react-query` v5 — Server state management (OpenAI vision API)
+- `@shopify/react-native-skia` — Custom drawing for stat bars
 - `@gorhom/bottom-sheet` — Native bottom sheet (used alongside HeroUI BottomSheet)
 
 ### Styling — Uniwind + HeroUI Native
 
+**See [`docs/STYLING.md`](../docs/STYLING.md) for the full styling guide.** Summary below.
+
 **All styling uses Tailwind `className` via Uniwind.** No `StyleSheet.create()`, no Tamagui, no inline style objects for static values.
 
-- **Theme tokens** are CSS custom properties defined in `global.css` (light/dark variants)
+- **Theme tokens** are CSS custom properties defined in `global.css` inside a single `@theme static { … }` block
+- **`@theme static` (not plain `@theme`)** — makes every token available BOTH as a utility class AND via `useCSSVariable()`, even if the class is never referenced in a `className`. Required because gradient / Skia / Ionicons colors are read imperatively. Never reintroduce a runtime "color registry" hack.
 - **className merging**: Use `cn()` from `src/lib/cn.ts` for conditional/conflicting classes
 - **Variants**: Use `tv()` from `tailwind-variants` for component variant systems
 - **Theme switching**: `Uniwind.setTheme('dark' | 'light')` in root layout
-- **CSS variable access**: `useCSSVariable('--color-background')` from `uniwind` for non-className props (e.g., tab bar colors)
+- **CSS variable access**: `useCSSVariable('--color-background') as string` — always cast to string for RN color props. No hex fallbacks; with `@theme static` the value is always resolved.
 
 **Token mapping** (use in className):
-
 - `bg-background`, `bg-card`, `bg-card-alt`, `bg-primary`, `bg-danger`, `bg-success`, `bg-warning`, `bg-info`
+- `bg-hunger`, `bg-mood`, `bg-energy`, `bg-bond`, `bg-personality` — pet-state semantic colors
+- `bg-lavender` — kawaii gradient accent
 - `text-foreground`, `text-foreground-secondary`, `text-muted`, `text-primary`, `text-danger`, `text-success`, `text-warning`
 - `border-border`
 
-**Uniwind rules:**
+**Hard rule — colors live in one place.** Never define `const PINK = '#FFAFCC'` or similar inline hex constants in feature code. Never pass raw hex to component props. All colors come from `global.css` CSS variables via className (`bg-primary`, `text-foreground`) or via `useCSSVariable('--color-primary')` when a non-style prop (e.g. Skia `color`, LinearGradient `colors`) requires a string.
 
+**Uniwind rules:**
 - React Native core components (`View`, `Text`, `Pressable`, `ScrollView`) support `className` natively — do NOT wrap with `withUniwind()`
 - Only non-RN components need `withUniwind()` — e.g., `expo-image`'s `Image` (wrapped in `src/shared/components/styled.ts`)
 - No dynamic className construction: `className={\`bg-${color}\`}` won't work — use mapping objects or ternaries with complete strings
 - For non-style color props (`tintColor`, `placeholderTextColor`), use `{propName}ClassName` with `accent-` prefix
 
 **HeroUI Native components** (compound pattern with subcomponents):
-
 - `Button` + `Button.Label` — in `src/shared/components/ui/app-button.tsx`
 - `Dialog` + `.Trigger`, `.Portal`, `.Content`, `.Title`, `.Description`, `.Actions`, `.BlurBackdrop`
 - `BottomSheet` + `.Trigger`, `.Portal`, `.Content`, `.Title`, `.Description`, `.Actions`, `.BlurBackdrop`
@@ -69,15 +81,6 @@ Already in project — do NOT re-install:
 - `app/_layout.tsx` — Root layout with Stack navigator, Uniwind theme switching, HeroUINativeProvider, QueryClientProvider
 - `app/(tabs)/_layout.tsx` — Bottom tab navigator using NativeTabs, reads colors via `useCSSVariable`
 - Path aliases: `@/*` → `./src/*`, `@features/*` → `./src/features/*`, `@shared/*` → `./src/shared/*`, `@lib/*` → `./src/lib/*`
-
-### Native Modules
-
-TurboModules as local packages created with `create-react-native-library` (builder-bob):
-
-- `modules/health-module/` — Steps tracking via HealthKit (fetch + live observer)
-- `modules/meal-module/` — Food tracking via HealthKit (create, query, addImage)
-
-Each module: codegen spec in `src/NativeXxx.ts` → ObjC++ bridge (`.h` + `.mm`) with `getTurboModule:` → Pure Swift HealthKit logic. Linked via `link:./modules/<n>` in package.json.
 
 ### Code Organization — Feature-Based
 
@@ -189,10 +192,12 @@ src/locales/                           ← i18n (en, vi)
   <View className="gap-6 p-4">
     <StepCounter />
     <MealList />
-  </View>;
+  </View>
 
   // BAD — component has outer margin baked in
-  const StepCounter = () => <View className="mb-6">...</View>;
+  const StepCounter = () => (
+    <View className="mb-6">...</View>
+  );
   ```
 
 - **No nested ternaries in JSX.** Never `{a ? (b ? <X/> : <Y/>) : <Z/>}`. This is unreadable.
@@ -265,20 +270,20 @@ export const useSignIn = () => {
     mutationKey: [mutationKeys.signIn],
     mutationFn: (data: SignInRequest) =>
       apiClient<SignInResponse>('/auth/login', { method: 'POST', body: data }),
-    onSuccess: data => {
+    onSuccess: (data) => {
       queryClient.setQueryData([queryKeys.auth], data);
     },
   });
 };
 
 // Use array query keys for parametric queries
-queryKey: ['booking', bookingId];
-queryKey: ['posts', { page, limit }];
+queryKey: ['booking', bookingId]
+queryKey: ['posts', { page, limit }]
 
 // Invalidate related queries after mutations
 onSuccess: () => {
   queryClient.invalidateQueries({ queryKey: [queryKeys.userInfo] });
-};
+}
 ```
 
 **DON'T:**
@@ -351,18 +356,6 @@ export const queryKeys = {
 - `babel.config.js` — `babel-preset-expo` only (no Tamagui, no Reanimated plugin)
 - `tsconfig.json` — includes `uniwind-types.d.ts`
 - `app.config.ts` — React Compiler, Firebase, Mapbox, multi-environment (dev/staging/prod)
-
-## Native Module Standards
-
-- `RCT_EXPORT_MODULE()` — never `RCT_EXTERN_MODULE`
-- Every `.mm` file must have `getTurboModule:` returning the codegen JSI binding
-- No `RCT_EXTERN_METHOD` — codegen protocol defines signatures
-- Swift classes are pure (no React Native imports) — ObjC++ bridge delegates to them
-- `[weak self]` in ALL HealthKit closures
-- `HKObserverQuery` `completionHandler()` must be called in every code path
-- Descriptive error codes: "HEALTHKIT_NOT_AVAILABLE", "QUERY_FAILED", etc.
-- After native code changes: `npx expo prebuild --clean --platform ios`
-- Each builder-bob module with Swift + ObjC++ needs a manual umbrella header: `modules/<module>/ios/<module_name_underscored>.h` that imports the ObjC header (e.g., `#import "HealthModule.h"`). Without this, `-Swift.h` compilation fails.
 
 ## Performance
 

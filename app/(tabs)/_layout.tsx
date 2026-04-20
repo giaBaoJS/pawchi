@@ -2,8 +2,8 @@ import { NativeTabs } from 'expo-router/unstable-native-tabs';
 import { useCSSVariable } from 'uniwind';
 
 export default function TabsLayout() {
-  const background = (useCSSVariable('--color-background') as string | undefined) ?? '#FFF9FB';
-  const primary = (useCSSVariable('--color-primary') as string | undefined) ?? '#FFAFCC';
+  const background = useCSSVariable('--color-background') as string;
+  const primary = useCSSVariable('--color-primary') as string;
 
   return (
     <NativeTabs

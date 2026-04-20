@@ -75,7 +75,7 @@ export default function ShareScreen() {
   const { viewShotRef, shareCard, saveToPhotos, copyImage } = useShareCard();
 
   if (!profile) {
-    router.replace('/(tabs)/');
+    router.replace('/home');
     return null;
   }
 

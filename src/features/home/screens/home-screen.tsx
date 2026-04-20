@@ -189,7 +189,7 @@ export default function HomeScreen() {
               key={stat.label}
               label={stat.label}
               value={stat.value}
-              color={stat.color}
+              tone={stat.tone}
             />
           ))}
         </DogchiCard>

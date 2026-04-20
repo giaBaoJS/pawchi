@@ -4,10 +4,17 @@
       "Bash(openspec list:*)",
       "Bash(mkdir -p /Users/paulnguyen/Documents/Personal/pawchi/assets/avatars)",
       "Bash(cp ../images/icon.png __TRACKED_VAR__.png)",
-      "Bash(git stash:*)"
+      "Bash(git stash:*)",
+      "Bash(bunx expo:*)",
+      "WebFetch(domain:docs.uniwind.dev)",
+      "Read(//Users/paulnguyen/Library/Developer/Xcode/DerivedData/**)",
+      "Read(//Users/paulnguyen/**)",
+      "Bash(ls /tmp/metro-*)",
+      "Bash(ls /tmp/haste-*)"
     ],
     "additionalDirectories": [
-      "/tmp"
+      "/tmp",
+      "/Users/paulnguyen/Documents/Personal/pawchi/.claude"
     ]
   }
 }

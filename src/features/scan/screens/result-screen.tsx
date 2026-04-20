@@ -1,14 +1,20 @@
-import { useEffect } from 'react';
-import { View, Text, Pressable, ScrollView } from 'react-native';
-import { useLocalSearchParams, router } from 'expo-router';
-import { useMutation } from '@tanstack/react-query';
-import { Image } from '@shared/components/styled';
 import { detectBreed } from '@/api/core/dog/queries';
-import { DogNotFoundError, AIParseError } from '../types/ai-types';
+import { Image } from '@shared/components/styled';
+import { IconCard } from '@shared/components/ui/icon-card';
+import { KawaiiButton } from '@shared/components/ui/kawaii-button';
+import { KawaiiScreen } from '@shared/components/ui/kawaii-screen';
+import { useMutation } from '@tanstack/react-query';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useEffect } from 'react';
+import { ScrollView, Text, View } from 'react-native';
+import { AIParseError, DogNotFoundError } from '../types/ai-types';
 import type { BreedDetectionResult } from '../types/ai-types';
 
 export default function ResultScreen() {
-  const { base64, photoUri } = useLocalSearchParams<{ base64: string; photoUri: string }>();
+  const { base64, photoUri } = useLocalSearchParams<{
+    base64: string;
+    photoUri: string;
+  }>();
 
   const { mutate, isPending, error, data } = useMutation({
     mutationFn: (): Promise<BreedDetectionResult> => detectBreed(base64),
@@ -16,8 +22,7 @@ export default function ResultScreen() {
 
   useEffect(() => {
     mutate();
-  // Run once on mount
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function onRetake() {
@@ -55,45 +60,41 @@ export default function ResultScreen() {
   if (!data) return null;
 
   return (
-    <ScrollView className="flex-1 bg-background">
-      {/* Photo */}
-      <Image
-        source={{ uri: photoUri }}
-        style={{ width: '100%', height: 280 }}
-        contentFit="cover"
-      />
-
-      <View className="px-5 pt-6 gap-5 pb-12">
-        {/* Breed name + confidence */}
-        <View className="items-center gap-2">
-          <Text className="text-foreground text-3xl font-extrabold text-center">
-            {data.breed}
-          </Text>
-          <Text className="text-foreground-secondary text-base font-semibold">
-            {Math.round(data.confidence * 100)}% confident
-          </Text>
+    <KawaiiScreen edges={['bottom']}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
+        <View className="overflow-hidden rounded-b-[32px]">
+          <Image
+            source={{ uri: photoUri }}
+            style={{ width: '100%', height: 320 }}
+            contentFit="cover"
+          />
         </View>
 
-        {/* Breed details */}
-        <View className="bg-card rounded-3xl p-5 gap-3">
-          <DetailRow label="Body size" value={capitalize(data.body_size)} />
-          <DetailRow label="Coat color" value={data.coat_color} />
-          <DetailRow label="Coat pattern" value={data.coat_pattern} />
+        <View className="px-5 pt-6 gap-5">
+          <View className="items-center gap-2">
+            <Text className="text-foreground text-3xl font-extrabold text-center -tracking-wide">
+              {data.breed}
+            </Text>
+            <View className="bg-overlay border border-border-soft px-3.5 py-1.5 rounded-full">
+              <Text className="text-foreground-secondary text-xs font-bold">
+                {Math.round(data.confidence * 100)}% confident
+              </Text>
+            </View>
+          </View>
+
+          <View className="bg-overlay border border-border-soft rounded-3xl p-5 gap-3">
+            <DetailRow label="Body size" value={capitalize(data.body_size)} />
+            <DetailRow label="Coat color" value={data.coat_color} />
+            <DetailRow label="Coat pattern" value={data.coat_pattern} />
+          </View>
+
+          <View className="gap-3">
+            <KawaiiButton tone="primary" onPress={onContinue} label="Continue" />
+            <KawaiiButton tone="soft" onPress={onRetake} label="Try another photo" />
+          </View>
         </View>
-
-        {/* Primary continue CTA */}
-        <Pressable
-          onPress={onContinue}
-          className="bg-primary rounded-[40px] py-4 items-center"
-        >
-          <Text className="text-white font-extrabold text-base">Continue</Text>
-        </Pressable>
-
-        <Pressable onPress={onRetake} className="py-2 items-center">
-          <Text className="text-foreground-secondary font-semibold">Try another photo</Text>
-        </Pressable>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </KawaiiScreen>
   );
 }
 
@@ -104,28 +105,30 @@ function capitalize(s: string) {
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
     <View className="flex-row items-center justify-between">
-      <Text className="text-foreground-secondary text-sm">{label}</Text>
-      <Text className="text-foreground font-semibold text-sm">{value}</Text>
+      <Text className="text-foreground-secondary text-sm font-semibold">{label}</Text>
+      <Text className="text-foreground font-extrabold text-sm">{value}</Text>
     </View>
   );
 }
 
 function LoadingView({ photoUri }: { photoUri: string }) {
   return (
-    <View className="flex-1 bg-background">
-      <Image
-        source={{ uri: photoUri }}
-        style={{ width: '100%', height: 280, opacity: 0.5 }}
-        contentFit="cover"
-      />
-      <View className="flex-1 items-center justify-center gap-4 px-8">
-        <Text style={{ fontSize: 60 }}>🔍</Text>
-        <Text className="text-foreground font-extrabold text-xl">Analyzing...</Text>
-        <Text className="text-foreground-secondary text-sm text-center">
-          Identifying your dog&apos;s breed via GPT-4o
+    <KawaiiScreen edges={['top', 'bottom']}>
+      <View className="overflow-hidden rounded-b-[32px]">
+        <Image
+          source={{ uri: photoUri }}
+          style={{ width: '100%', height: 280, opacity: 0.55 }}
+          contentFit="cover"
+        />
+      </View>
+      <View className="flex-1 items-center justify-center gap-5 px-8">
+        <IconCard icon="search" size="lg" tone="primary" />
+        <Text className="text-foreground text-xl font-extrabold">Analyzing…</Text>
+        <Text className="text-foreground-secondary text-sm text-center font-medium">
+          Identifying your dog&apos;s breed
         </Text>
       </View>
-    </View>
+    </KawaiiScreen>
   );
 }
 
@@ -137,21 +140,25 @@ interface ErrorViewProps {
 
 function ErrorView({ isDogNotFound, message, onRetake }: ErrorViewProps) {
   return (
-    <View className="flex-1 bg-background items-center justify-center gap-6 px-8">
-      <Text style={{ fontSize: 60 }}>{isDogNotFound ? '🐕' : '⚠️'}</Text>
-      <View className="items-center gap-3">
-        <Text className="text-foreground text-xl font-extrabold text-center">
-          {isDogNotFound ? 'No dog found!' : 'Something went wrong'}
-        </Text>
-        <Text className="text-foreground-secondary text-sm text-center">
-          {isDogNotFound
-            ? 'We could not detect a dog in this photo. Make sure your dog is clearly visible.'
-            : message}
-        </Text>
+    <KawaiiScreen edges={['top', 'bottom']}>
+      <View className="flex-1 items-center justify-center gap-6 px-8">
+        <IconCard
+          icon={isDogNotFound ? 'paw-outline' : 'alert-circle-outline'}
+          size="lg"
+          tone="primary"
+        />
+        <View className="items-center gap-3">
+          <Text className="text-foreground text-xl font-extrabold text-center">
+            {isDogNotFound ? 'No dog found!' : 'Something went wrong'}
+          </Text>
+          <Text className="text-foreground-secondary text-sm text-center font-medium leading-5">
+            {isDogNotFound
+              ? 'We could not detect a dog in this photo. Make sure your dog is clearly visible.'
+              : message}
+          </Text>
+        </View>
+        <KawaiiButton tone="primary" onPress={onRetake} label="Try Again" className="px-8" />
       </View>
-      <Pressable onPress={onRetake} className="bg-primary rounded-[40px] px-10 py-4">
-        <Text className="text-white font-extrabold">Try Again</Text>
-      </Pressable>
-    </View>
+    </KawaiiScreen>
   );
 }

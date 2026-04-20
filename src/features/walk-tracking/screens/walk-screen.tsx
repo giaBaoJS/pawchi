@@ -1,11 +1,15 @@
-import { useEffect, useRef, useState } from 'react';
-import { View, Text, Pressable, AppState } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { router } from 'expo-router';
-import { useGamificationStore } from '@features/gamification/stores/gamification-store';
+import { Ionicons } from '@expo/vector-icons';
 import { useDailyMissionsStore } from '@features/daily-missions/stores/daily-missions-store';
-import { useWalkTimer } from '../hooks/use-walk-timer';
+import { useGamificationStore } from '@features/gamification/stores/gamification-store';
+import { IconCard } from '@shared/components/ui/icon-card';
+import { KawaiiButton } from '@shared/components/ui/kawaii-button';
+import { KawaiiScreen } from '@shared/components/ui/kawaii-screen';
+import { router } from 'expo-router';
+import { useEffect, useRef, useState } from 'react';
+import { AppState, Text, View } from 'react-native';
+import { useCSSVariable } from 'uniwind';
 import { useWalkLocation } from '../hooks/use-walk-location';
+import { useWalkTimer } from '../hooks/use-walk-timer';
 import { computeWalkRewards } from '../utils/walk-rewards';
 
 const BACKGROUND_END_MS = 60 * 1000;
@@ -16,6 +20,7 @@ export default function WalkScreen() {
   const { durationSeconds, elapsedLabel } = useWalkTimer(startedAt);
   const { distanceMeters, hasPermission } = useWalkLocation(!ended);
   const backgroundedAtRef = useRef<number | null>(null);
+  const energyColor = useCSSVariable('--color-energy') as string;
 
   useEffect(() => {
     const sub = AppState.addEventListener('change', (state) => {
@@ -59,37 +64,43 @@ export default function WalkScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={['top', 'bottom']}>
+    <KawaiiScreen>
       <View className="flex-1 items-center justify-center gap-8 px-6">
-        <Text className="text-foreground-secondary uppercase tracking-widest text-sm">
+        <IconCard icon="walk" size="lg" tone="energy" />
+        <Text className="text-foreground-secondary uppercase tracking-widest text-xs font-extrabold">
           Walking
         </Text>
-        <Text className="text-foreground text-7xl font-extrabold" style={{ fontVariant: ['tabular-nums'] }}>
+        <Text
+          className="text-foreground text-7xl font-extrabold -tracking-wider"
+          style={{ fontVariant: ['tabular-nums'] }}
+        >
           {elapsedLabel}
         </Text>
-        <View className="items-center gap-1">
+        <View className="items-center gap-2">
           {hasPermission && distanceMeters != null ? (
-            <Text className="text-foreground-secondary text-base">
-              {(distanceMeters / 1000).toFixed(2)} km
-            </Text>
+            <View className="flex-row items-center gap-2 bg-overlay border border-border-soft px-4 py-2 rounded-full">
+              <Ionicons name="location" size={14} color={energyColor} />
+              <Text className="text-foreground text-sm font-extrabold">
+                {(distanceMeters / 1000).toFixed(2)} km
+              </Text>
+            </View>
           ) : (
-            <Text className="text-foreground-secondary text-sm">
-              Distance tracking off
-            </Text>
+            <View className="bg-overlay border border-border-soft px-4 py-2 rounded-full">
+              <Text className="text-foreground-secondary text-xs font-bold">
+                Distance tracking off
+              </Text>
+            </View>
           )}
-          <Text className="text-foreground-secondary text-xs">
-            {durationSeconds < 60 ? 'Walk at least 1 min for rewards' : 'Earning bones + EXP'}
+          <Text className="text-foreground-secondary text-xs font-medium">
+            {durationSeconds < 60
+              ? 'Walk at least 1 min for rewards'
+              : 'Earning bones + EXP'}
           </Text>
         </View>
       </View>
       <View className="px-6 pb-4">
-        <Pressable
-          onPress={() => endWalk()}
-          className="bg-primary rounded-[40px] py-4 items-center"
-        >
-          <Text className="text-white font-extrabold text-base">End walk</Text>
-        </Pressable>
+        <KawaiiButton tone="primary" onPress={() => endWalk()} label="End walk" />
       </View>
-    </SafeAreaView>
+    </KawaiiScreen>
   );
 }

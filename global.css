@@ -1,32 +1,158 @@
-@import 'tailwindcss/theme';
+@import 'tailwindcss';
 @import 'uniwind';
 @import 'heroui-native/styles';
 
-@theme {
-  /* ─── Surfaces ─────────────────────────────────────────── */
-  --color-background: #FFF9FB;
-  --color-card: #FFF0F5;
-  --color-card-alt: #FFE4EC;
+@source './node_modules/heroui-native/lib';
 
-  /* ─── Brand ─────────────────────────────────────────────── */
-  --color-primary: #FFAFCC;
-  --color-danger: #FF8FAB;
-  --color-success: #B9E4C9;
-  --color-warning: #FFE9A8;
-  --color-info: #BDE0FE;
+/*
+ * Pawchi theme — single source of truth for colors.
+ * See docs/STYLING.md for the full guide.
+ *
+ * Two layers:
+ *   1. HeroUI semantic vars (--background, --accent, --danger, …) go inside
+ *      @layer theme @variant light/dark. HeroUI maps them to --color-* via
+ *      its own @theme inline, so `bg-background`, `text-foreground`, etc. work
+ *      automatically. These override HeroUI's defaults for our kawaii palette.
+ *
+ *   2. Pawchi custom tokens use the --color-* prefix directly so Tailwind
+ *      auto-generates utilities (bg-primary, bg-card, bg-hunger, …) AND the
+ *      tokens are readable via useCSSVariable() at runtime.
+ *
+ * Rules:
+ *   - className is the default. Use bg-primary, text-foreground, border-border-soft.
+ *   - useCSSVariable('--color-X') only for props that require JS strings:
+ *     LinearGradient.colors, Ionicons color, shadowColor, Skia colors,
+ *     NativeTabs colors, map/chart/camera/native module props.
+ */
 
-  /* ─── Stat Colors ───────────────────────────────────────── */
-  --color-hunger: #FFCBA4;
-  --color-mood: #B9E4C9;
-  --color-energy: #BDE0FE;
-  --color-bond: #FFAFCC;
-  --color-personality: #D8C8F6;
+@layer theme {
+  :root {
+    @variant light {
+      /* ─── HeroUI semantic layer — kawaii palette ────────── */
+      --background: #FFF9FB;
+      --foreground: #5A4A54;
 
-  /* ─── Text ──────────────────────────────────────────────── */
-  --color-foreground: #5A4A54;
-  --color-foreground-secondary: #8B7A82;
-  --color-muted: #C9B8BE;
+      --surface: #FFF0F5;
+      --surface-foreground: #5A4A54;
+      --surface-secondary: #FFE4EC;
+      --surface-secondary-foreground: #5A4A54;
+      --surface-tertiary: #FFD4E3;
+      --surface-tertiary-foreground: #5A4A54;
 
-  /* ─── Border ────────────────────────────────────────────── */
-  --color-border: #F2D8E1;
+      --overlay: rgba(255, 255, 255, 0.72);
+      --overlay-foreground: #5A4A54;
+      --backdrop: rgba(90, 74, 84, 0.3);
+
+      --muted: #8B7A82;
+
+      --default: #FFF0F5;
+      --default-foreground: #5A4A54;
+
+      --accent: #FFAFCC;
+      --accent-foreground: #FFFFFF;
+
+      --field-background: #FFFFFF;
+      --field-foreground: #5A4A54;
+      --field-placeholder: #C9B8BE;
+      --field-border: #F2D8E1;
+
+      --success: #B9E4C9;
+      --success-foreground: #2B5A3F;
+      --warning: #FFE9A8;
+      --warning-foreground: #5A4A54;
+      --danger: #FF8FAB;
+      --danger-foreground: #FFFFFF;
+
+      --segment: #FFFFFF;
+      --segment-foreground: #5A4A54;
+
+      --border: #F2D8E1;
+      --separator: #FFE4EC;
+      --focus: #FFAFCC;
+      --link: #5A4A54;
+
+      /* ─── Pawchi tokens (utility classes + useCSSVariable) ── */
+      --color-primary: #FFAFCC;
+      --color-foreground-secondary: #8B7A82;
+
+      --color-card: #FFF0F5;
+      --color-card-alt: #FFE4EC;
+      --color-lavender: #EDE7FF;
+      --color-border-soft: #FFE4EC;
+      --color-overlay-soft: rgba(255, 255, 255, 0.54);
+
+      --color-info: #BDE0FE;
+      --color-hunger: #FFCBA4;
+      --color-mood: #B9E4C9;
+      --color-energy: #BDE0FE;
+      --color-bond: #FFAFCC;
+      --color-personality: #D8C8F6;
+
+      --color-peach: #FFCBA4;
+      --color-sky: #BDE0FE;
+    }
+
+    @variant dark {
+      --background: #2B1F24;
+      --foreground: #FFF0F5;
+
+      --surface: #3A2A32;
+      --surface-foreground: #FFF0F5;
+      --surface-secondary: #4A3640;
+      --surface-secondary-foreground: #FFF0F5;
+      --surface-tertiary: #5A4A54;
+      --surface-tertiary-foreground: #FFF0F5;
+
+      --overlay: rgba(74, 54, 64, 0.85);
+      --overlay-foreground: #FFF0F5;
+      --backdrop: rgba(0, 0, 0, 0.5);
+
+      --muted: #C9B8BE;
+
+      --default: #3A2A32;
+      --default-foreground: #FFF0F5;
+
+      --accent: #FFAFCC;
+      --accent-foreground: #2B1F24;
+
+      --field-background: #3A2A32;
+      --field-foreground: #FFF0F5;
+      --field-placeholder: #8B7A82;
+      --field-border: #5A4A54;
+
+      --success: #B9E4C9;
+      --success-foreground: #2B5A3F;
+      --warning: #FFE9A8;
+      --warning-foreground: #2B1F24;
+      --danger: #FF8FAB;
+      --danger-foreground: #FFFFFF;
+
+      --segment: #3A2A32;
+      --segment-foreground: #FFF0F5;
+
+      --border: #4A3640;
+      --separator: #5A4A54;
+      --focus: #FFAFCC;
+      --link: #FFF0F5;
+
+      --color-primary: #FFAFCC;
+      --color-foreground-secondary: #C9B8BE;
+
+      --color-card: #3A2A32;
+      --color-card-alt: #4A3640;
+      --color-lavender: #3A3050;
+      --color-border-soft: #4A3640;
+      --color-overlay-soft: rgba(74, 54, 64, 0.54);
+
+      --color-info: #BDE0FE;
+      --color-hunger: #FFCBA4;
+      --color-mood: #B9E4C9;
+      --color-energy: #BDE0FE;
+      --color-bond: #FFAFCC;
+      --color-personality: #D8C8F6;
+
+      --color-peach: #FFCBA4;
+      --color-sky: #BDE0FE;
+    }
+  }
 }

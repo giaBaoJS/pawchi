@@ -1,10 +1,18 @@
-import { useState } from 'react';
-import { View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform } from 'react-native';
-import { useLocalSearchParams, router } from 'expo-router';
-import { Dialog } from 'heroui-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Image } from '@shared/components/styled';
 import { resolveAvatar } from '@features/dog-avatar/utils/resolve-avatar';
+import { Image } from '@shared/components/styled';
+import { KawaiiButton } from '@shared/components/ui/kawaii-button';
+import { KawaiiScreen } from '@shared/components/ui/kawaii-screen';
+import { router, useLocalSearchParams } from 'expo-router';
+import { Dialog } from 'heroui-native';
+import { useState } from 'react';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
+import { useCSSVariable } from 'uniwind';
 import { useDogProfileStore } from '../stores/dog-profile-store';
 import type { BodySize, DogProfile } from '../types/dog-profile';
 
@@ -22,6 +30,7 @@ export default function NameDogScreen() {
   const [showReplaceDialog, setShowReplaceDialog] = useState(false);
   const existingProfile = useDogProfileStore((s) => s.profile);
   const setProfile = useDogProfileStore((s) => s.setProfile);
+  const placeholder = useCSSVariable('--color-muted') as string;
 
   const trimmed = name.trim();
   const isValid = trimmed.length >= 1 && trimmed.length <= 20;
@@ -58,25 +67,29 @@ export default function NameDogScreen() {
   }
 
   return (
-    <SafeAreaView className="flex-1 bg-background" edges={['top', 'bottom']}>
+    <KawaiiScreen>
       <KeyboardAvoidingView
         className="flex-1"
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       >
-        <View className="flex-1 px-6 pt-6 gap-6">
+        <View className="flex-1 px-6 pt-8 gap-8">
           <View className="items-center gap-3">
             {photoUri ? (
-              <Image
-                source={{ uri: photoUri }}
-                style={{ width: 140, height: 140, borderRadius: 70 }}
-                contentFit="cover"
-              />
+              <View className="rounded-full p-1.5 bg-overlay border border-border-soft">
+                <Image
+                  source={{ uri: photoUri }}
+                  style={{ width: 140, height: 140, borderRadius: 70 }}
+                  contentFit="cover"
+                />
+              </View>
             ) : null}
-            <Text className="text-foreground-secondary text-base">{breed}</Text>
+            <View className="bg-overlay border border-border-soft px-4 py-1.5 rounded-full">
+              <Text className="text-foreground-secondary text-xs font-bold">{breed}</Text>
+            </View>
           </View>
 
           <View className="gap-3">
-            <Text className="text-foreground text-2xl font-extrabold text-center">
+            <Text className="text-foreground text-2xl font-extrabold text-center -tracking-wide">
               What&apos;s your dog&apos;s name?
             </Text>
             <TextInput
@@ -85,33 +98,24 @@ export default function NameDogScreen() {
               placeholder="Enter a name"
               autoFocus
               maxLength={20}
-              className="bg-card rounded-2xl px-5 py-4 text-foreground text-lg"
-              placeholderTextColor="#9ca3af"
+              className="bg-overlay border border-border-soft rounded-2xl px-5 py-4 text-foreground text-lg text-center"
+              placeholderTextColor={placeholder}
               returnKeyType="done"
               onSubmitEditing={onSave}
             />
-            <Text className="text-foreground-secondary text-xs text-center">
+            <Text className="text-foreground-secondary text-xs text-center font-medium">
               1–20 characters
             </Text>
           </View>
 
           <View className="flex-1" />
 
-          <Pressable
+          <KawaiiButton
+            tone={isValid ? 'primary' : 'soft'}
+            isDisabled={!isValid}
             onPress={onSave}
-            disabled={!isValid}
-            className={`rounded-[40px] py-4 items-center ${
-              isValid ? 'bg-primary' : 'bg-card'
-            }`}
-          >
-            <Text
-              className={`font-extrabold text-base ${
-                isValid ? 'text-white' : 'text-foreground-secondary'
-              }`}
-            >
-              Save
-            </Text>
-          </Pressable>
+            label="Save"
+          />
         </View>
       </KeyboardAvoidingView>
 
@@ -125,25 +129,27 @@ export default function NameDogScreen() {
               Progress stays with your account.
             </Dialog.Description>
             <View className="flex-row gap-3 mt-4">
-              <Pressable
-                onPress={() => setShowReplaceDialog(false)}
-                className="flex-1 bg-card rounded-2xl py-3 items-center"
-              >
-                <Text className="text-foreground font-semibold">Cancel</Text>
-              </Pressable>
-              <Pressable
-                onPress={() => {
-                  setShowReplaceDialog(false);
-                  commit();
-                }}
-                className="flex-1 bg-primary rounded-2xl py-3 items-center"
-              >
-                <Text className="text-white font-semibold">Replace</Text>
-              </Pressable>
+              <View className="flex-1">
+                <KawaiiButton
+                  tone="soft"
+                  label="Cancel"
+                  onPress={() => setShowReplaceDialog(false)}
+                />
+              </View>
+              <View className="flex-1">
+                <KawaiiButton
+                  tone="primary"
+                  label="Replace"
+                  onPress={() => {
+                    setShowReplaceDialog(false);
+                    commit();
+                  }}
+                />
+              </View>
             </View>
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog>
-    </SafeAreaView>
+    </KawaiiScreen>
   );
 }
