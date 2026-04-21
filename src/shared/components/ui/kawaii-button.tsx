@@ -13,6 +13,8 @@ interface KawaiiButtonProps {
   className?: string;
   isDisabled?: boolean;
   onPress?: (event: GestureResponderEvent) => void;
+  onPressIn?: (event: GestureResponderEvent) => void;
+  onPressOut?: (event: GestureResponderEvent) => void;
 }
 
 const root = tv({

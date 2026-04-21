@@ -1,141 +1,151 @@
-import { Ionicons } from "@expo/vector-icons";
-import { IconCard } from "@shared/components/ui/icon-card";
-import { KawaiiButton } from "@shared/components/ui/kawaii-button";
-import { KawaiiScreen } from "@shared/components/ui/kawaii-screen";
-import Constants from "expo-constants";
-import { router } from "expo-router";
-import { Text, View } from "react-native";
-import { useCSSVariable } from "uniwind";
+import { KawaiiButton } from '@shared/components/ui/kawaii-button';
+import Constants from 'expo-constants';
+import { LinearGradient } from 'expo-linear-gradient';
+import { router } from 'expo-router';
+import { StatusBar, Text, View } from 'react-native';
+import Animated, { useAnimatedStyle } from 'react-native-reanimated';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useCSSVariable } from 'uniwind';
+import { AnimatedBackground } from '../components/animated-background';
+import { PillRow } from '../components/pill-row';
+import { ScannerCore } from '../components/scanner-core';
+import { ShimmerCta } from '../components/shimmer-cta';
+import { useEntryTimeline } from '../hooks/use-entry-timeline';
+import { useIdleLoops } from '../hooks/use-idle-loops';
+import { useWelcomeThemeColors } from '../hooks/use-theme-colors';
+import type { WelcomeScreenProps } from '../types/welcome';
+import { INTENSITY_CONFIGS } from '../types/welcome';
 
 const extra = Constants.expoConfig?.extra as
   | Record<string, string | undefined>
   | undefined;
-const apiKey = extra?.openaiApiKey;
+const API_KEY = extra?.openaiApiKey;
 
-const PILLS = [
-  { icon: "paw" as const, label: "Breed ID" },
-  { icon: "stats-chart" as const, label: "Stats" },
-  { icon: "sparkles" as const, label: "Instant" },
-];
+const TITLE_TRANSLATE = 16;
+const SUBTITLE_TRANSLATE = 12;
 
-function Pill({
-  icon,
-  label,
-  color,
-}: {
-  icon: keyof typeof Ionicons.glyphMap;
-  label: string;
-  color: string;
-}) {
+export default function WelcomeScreen({
+  simple = false,
+  intensity = 'normal',
+}: WelcomeScreenProps) {
+  const colors = useWelcomeThemeColors();
+  const config = INTENSITY_CONFIGS[intensity];
+  const entry = useEntryTimeline();
+  const loops = useIdleLoops(config, !simple || intensity !== 'off');
+
+  const isApiKeyMissing = !API_KEY;
+
+  const gradientStart = useCSSVariable('--color-card-alt') as string;
+  const gradientMiddle = useCSSVariable('--color-card') as string;
+  const gradientEnd = useCSSVariable('--color-lavender') as string;
+
+  const titleStyle = useAnimatedStyle(() => ({
+    opacity: entry.title.value,
+    transform: [{ translateY: (1 - entry.title.value) * TITLE_TRANSLATE }],
+  }));
+
+  const subtitleStyle = useAnimatedStyle(() => ({
+    opacity: entry.subtitle.value,
+    transform: [
+      { translateY: (1 - entry.subtitle.value) * SUBTITLE_TRANSLATE },
+    ],
+  }));
+
+  const skipStyle = useAnimatedStyle(() => ({
+    opacity: entry.skip.value,
+    transform: [{ translateY: (1 - entry.skip.value) * 8 }],
+  }));
+
+  const shimmerOverlay = 'rgba(255,255,255,0.38)';
+
   return (
-    <View
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: "rgba(255,255,255,0.6)",
-        paddingHorizontal: 14,
-        paddingVertical: 8,
-        borderRadius: 999,
-        borderWidth: 1,
-        borderColor: "rgba(255,175,204,0.3)",
-        gap: 6,
-      }}
-    >
-      <Ionicons name={icon} size={13} color={color} />
-      <Text style={{ fontSize: 13, color, fontWeight: "600" }}>{label}</Text>
-    </View>
-  );
-}
+    <View className="flex-1">
+      <StatusBar barStyle="dark-content" />
 
-export default function WelcomeScreen() {
-  const pillColor = useCSSVariable("--color-foreground-secondary") as string;
+      {/* Layer 0: gradient backdrop — fills entire screen including safe areas */}
+      <LinearGradient
+        colors={[gradientStart, gradientMiddle, gradientEnd]}
+        start={{ x: 0.1, y: 0 }}
+        end={{ x: 0.9, y: 1 }}
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+      />
 
-  return (
-    <KawaiiScreen>
-      <View
-        style={{
-          flex: 1,
-          alignItems: "center",
-          justifyContent: "space-between",
-          paddingHorizontal: 32,
-          paddingTop: 80,
-          paddingBottom: 56,
-        }}
-      >
-        {/* zero-height top item keeps hero in upper-center via space-between */}
-        <View />
+      {/* Layer 1: animated pastel blobs — also full-screen, sibling of SafeAreaView */}
+      {!simple && (
+        <AnimatedBackground entryOpacity={entry.background} colors={colors} />
+      )}
 
-        {/* hero block */}
-        <View style={{ alignItems: "center", gap: 28 }}>
-          <IconCard icon="paw" size="lg" tone="primary" />
+      {/* Layer 2: foreground content inside safe area */}
+      <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
+        <View className="flex-1 items-center justify-between px-8 pt-20 pb-14">
+          {/* top spacer — keeps hero in upper-center via space-between */}
+          <View />
 
-          <View style={{ alignItems: "center", gap: 10 }}>
-            <Text
-              style={{
-                fontSize: 52,
-                fontWeight: "800",
-                color: "#5A4A54",
-                letterSpacing: -1,
-              }}
-            >
-              Pawchi
-            </Text>
-            <Text
-              style={{
-                fontSize: 16,
-                color: "#8B7A82",
-                textAlign: "center",
-                lineHeight: 24,
-                fontWeight: "500",
-              }}
-            >
-              Snap a photo,{"\n"}discover your dog&apos;s breed.
-            </Text>
+          {/* hero block */}
+          <View className="items-center gap-6">
+            <ScannerCore
+              entryPaw={entry.paw}
+              entryHalo={entry.halo}
+              loops={loops}
+              config={config}
+              colors={colors}
+              simple={simple}
+            />
+
+            <View className="items-center gap-2.5">
+              <Animated.View style={titleStyle}>
+                <Text className="text-foreground text-[52px] font-extrabold tracking-tight">
+                  Pawchi
+                </Text>
+              </Animated.View>
+
+              <Animated.View style={subtitleStyle}>
+                <Text className="text-muted text-center text-base font-medium leading-6">
+                  Snap a photo,{'\n'}discover your dog&apos;s breed.
+                </Text>
+              </Animated.View>
+            </View>
+
+            <PillRow
+              pill0={entry.pill0}
+              pill1={entry.pill1}
+              pill2={entry.pill2}
+              color={colors.foregroundSecondary}
+            />
           </View>
 
-          <View style={{ flexDirection: "row", gap: 10 }}>
-            {PILLS.map((pill) => (
-              <Pill
-                key={pill.label}
-                icon={pill.icon}
-                label={pill.label}
-                color={pillColor ?? "#8B7A82"}
+          {/* CTA block */}
+          <View className="w-full gap-3">
+            <ShimmerCta
+              label="Scan my dog"
+              onPress={() => router.push('/scan')}
+              isDisabled={isApiKeyMissing}
+              entryProgress={entry.cta}
+              shimmer={loops.shimmer}
+              ctaBreath={loops.ctaBreath}
+              overlayColor={shimmerOverlay}
+              tone="primary"
+            />
+
+            <Animated.View style={skipStyle}>
+              <KawaiiButton
+                tone="soft"
+                label="Skip for now"
+                onPress={() => router.replace('/home')}
+                className="w-full"
               />
-            ))}
+            </Animated.View>
+
+            {isApiKeyMissing && (
+              <Animated.View style={skipStyle}>
+                <Text className="text-primary px-4 text-center text-xs font-medium">
+                  OpenAI API key not configured — add it to .env and rebuild
+                </Text>
+              </Animated.View>
+            )}
           </View>
         </View>
-
-        {/* CTA buttons */}
-        <View style={{ width: "100%", gap: 12 }}>
-          <KawaiiButton
-            tone="primary"
-            isDisabled={!apiKey}
-            onPress={() => router.push("/scan")}
-            label="Scan my dog"
-            className="w-full"
-          />
-          <KawaiiButton
-            tone="soft"
-            onPress={() => router.replace("/home")}
-            label="Skip for now"
-            className="w-full"
-          />
-
-          {!apiKey && (
-            <Text
-              style={{
-                color: "#FF8FAB",
-                fontSize: 12,
-                textAlign: "center",
-                fontWeight: "500",
-                paddingHorizontal: 16,
-              }}
-            >
-              OpenAI API key not configured — add it to .env and rebuild
-            </Text>
-          )}
-        </View>
-      </View>
-    </KawaiiScreen>
+      </SafeAreaView>
+    </View>
   );
 }
