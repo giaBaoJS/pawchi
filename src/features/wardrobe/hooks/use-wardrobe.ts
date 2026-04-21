@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import { WARDROBE_ITEMS } from '../constants/items';
-import { useDogOutfit, useEquipItem } from '@features/dog/stores/dog-store';
-import { useDogProfile } from '@features/dog/stores/dog-store';
+import {
+  useDogOutfit,
+  useDogProfile,
+  useEquipItem,
+} from '@features/dog/stores/dog-store';
 import type { WardrobeCategory, OutfitSlot } from '../types/wardrobe-types';
 
 export function useWardrobe() {

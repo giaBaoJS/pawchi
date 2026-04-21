@@ -1,4 +1,4 @@
-import { Canvas, Path, Oval, Paint, Skia } from '@shopify/react-native-skia';
+import { Canvas, Path, Oval, Skia } from '@shopify/react-native-skia';
 import { useMemo } from 'react';
 import { BREED_PATHS } from '../../constants/breeds';
 import { darkenColor } from '@features/scan/utils/color-extractor';
