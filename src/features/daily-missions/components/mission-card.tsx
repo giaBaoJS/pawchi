@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
+import { AppText } from '@shared/components/ui/app-text';
 import { useCSSVariable } from 'uniwind';
 import type { MissionDef } from '../constants/mission-catalog';
 
@@ -19,16 +20,20 @@ export function MissionCard({ def, progress, completed }: MissionCardProps) {
   return (
     <View className="bg-overlay border border-border-soft rounded-3xl p-4 gap-2.5">
       <View className="flex-row items-center justify-between">
-        <Text className="text-foreground font-extrabold text-sm">{def.title}</Text>
+        <AppText weight="extrabold" className="text-foreground text-sm">
+          {def.title}
+        </AppText>
         {completed ? (
           <View className="flex-row items-center gap-1">
             <Ionicons name="checkmark-circle" size={16} color={successColor} />
-            <Text className="text-success text-xs font-extrabold">Done</Text>
+            <AppText weight="extrabold" className="text-success text-xs">
+              Done
+            </AppText>
           </View>
         ) : (
-          <Text className="text-foreground-secondary text-xs font-bold">
+          <AppText weight="bold" className="text-foreground-secondary text-xs">
             {progress} / {def.target}
-          </Text>
+          </AppText>
         )}
       </View>
       <View className="h-2 bg-card-alt rounded-full overflow-hidden">
@@ -40,16 +45,22 @@ export function MissionCard({ def, progress, completed }: MissionCardProps) {
       <View className="flex-row items-center gap-2">
         <View className="flex-row items-center gap-1">
           <Ionicons name="paw" size={12} color={personalityColor} />
-          <Text className="text-foreground-secondary text-xs font-semibold">
+          <AppText
+            weight="semibold"
+            className="text-foreground-secondary text-xs"
+          >
             +{def.reward.bones}
-          </Text>
+          </AppText>
         </View>
-        <Text className="text-muted text-xs">·</Text>
+        <AppText className="text-muted text-xs">·</AppText>
         <View className="flex-row items-center gap-1">
           <Ionicons name="star" size={12} color={primaryColor} />
-          <Text className="text-foreground-secondary text-xs font-semibold">
+          <AppText
+            weight="semibold"
+            className="text-foreground-secondary text-xs"
+          >
             +{def.reward.exp} EXP
-          </Text>
+          </AppText>
         </View>
       </View>
     </View>

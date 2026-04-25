@@ -14,7 +14,7 @@ import { StatBars } from '../components/stat-bars';
 
 export default function HomeScreen() {
   const avatarId = useDogProfileStore(
-    (s) => (s.profile?.avatarId as AvatarId | undefined) ?? 'generic-medium',
+    s => (s.profile?.avatarId as AvatarId | undefined) ?? 'generic-medium',
   );
 
   useEffect(() => {

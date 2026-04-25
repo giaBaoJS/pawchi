@@ -1,4 +1,5 @@
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
+import { AppText } from '@shared/components/ui/app-text';
 import { tv } from 'tailwind-variants';
 import { cn } from '@lib/cn';
 
@@ -38,10 +39,14 @@ interface BreedChipProps {
   className?: string;
 }
 
-export function BreedChip({ text, variant = 'breed', className }: BreedChipProps) {
+export function BreedChip({
+  text,
+  variant = 'breed',
+  className,
+}: BreedChipProps) {
   return (
     <View className={cn(chip({ variant }), className)}>
-      <Text className={label({ variant })}>{text}</Text>
+      <AppText className={label({ variant })}>{text}</AppText>
     </View>
   );
 }

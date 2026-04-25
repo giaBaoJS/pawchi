@@ -1,5 +1,6 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
+import { AppText } from '@shared/components/ui/app-text';
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 import type { SharedValue } from 'react-native-reanimated';
 
@@ -30,9 +31,9 @@ function AnimatedPill({ icon, label, progress, color }: AnimatedPillProps) {
       style={style}
     >
       <Ionicons name={icon} size={13} color={color} />
-      <Text className="text-[13px] font-semibold" style={{ color }}>
+      <AppText weight="semibold" className="text-[13px]" style={{ color }}>
         {label}
-      </Text>
+      </AppText>
     </Animated.View>
   );
 }

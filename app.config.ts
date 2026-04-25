@@ -33,6 +33,23 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   plugins: [
     'expo-router',
     [
+      'expo-font',
+      {
+        fonts: [
+          './assets/fonts/CherryBombOne-Regular.ttf',
+          './assets/fonts/Nunito-Light.ttf',
+          './assets/fonts/Nunito-Regular.ttf',
+          './assets/fonts/Nunito-Medium.ttf',
+          './assets/fonts/Nunito-SemiBold.ttf',
+          './assets/fonts/Nunito-Bold.ttf',
+          './assets/fonts/Nunito-ExtraBold.ttf',
+          './assets/fonts/Nunito-Black.ttf',
+          './assets/fonts/Nunito-Italic.ttf',
+          './assets/fonts/Nunito-BoldItalic.ttf',
+        ],
+      },
+    ],
+    [
       'expo-splash-screen',
       {
         backgroundColor: '#FFF9FB',

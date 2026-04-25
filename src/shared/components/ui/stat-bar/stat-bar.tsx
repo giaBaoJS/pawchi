@@ -1,6 +1,7 @@
 import { Canvas, Paint, RoundedRect } from '@shopify/react-native-skia';
 import { useEffect } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
+import { AppText } from '@shared/components/ui/app-text';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -46,7 +47,11 @@ export function StatBar({ label, value, tone }: StatBarProps) {
 
   useEffect(() => {
     if (isWarning) {
-      pulseOpacity.value = withRepeat(withTiming(0.45, { duration: 600 }), -1, true);
+      pulseOpacity.value = withRepeat(
+        withTiming(0.45, { duration: 600 }),
+        -1,
+        true,
+      );
     } else {
       pulseOpacity.value = withTiming(1);
     }
@@ -59,24 +64,39 @@ export function StatBar({ label, value, tone }: StatBarProps) {
   return (
     <View className="gap-1.5">
       <View className="flex-row items-center justify-between">
-        <Text className="text-foreground-secondary text-xs font-semibold uppercase tracking-wider">
+        <AppText
+          weight="semibold"
+          className="text-foreground-secondary text-xs uppercase tracking-wider"
+        >
           {label}
-        </Text>
-        <Text
+        </AppText>
+        <AppText
           className={cn(
             'text-xs font-extrabold',
             isWarning ? 'text-danger' : 'text-foreground',
           )}
         >
           {Math.round(value)}
-        </Text>
+        </AppText>
       </View>
       <Animated.View style={animatedStyle}>
         <Canvas style={{ width: BAR_WIDTH, height: BAR_HEIGHT }}>
-          <RoundedRect x={0} y={0} width={BAR_WIDTH} height={BAR_HEIGHT} r={BAR_HEIGHT / 2}>
+          <RoundedRect
+            x={0}
+            y={0}
+            width={BAR_WIDTH}
+            height={BAR_HEIGHT}
+            r={BAR_HEIGHT / 2}
+          >
             <Paint color={trackColor} />
           </RoundedRect>
-          <RoundedRect x={0} y={0} width={fillWidth} height={BAR_HEIGHT} r={BAR_HEIGHT / 2}>
+          <RoundedRect
+            x={0}
+            y={0}
+            width={fillWidth}
+            height={BAR_HEIGHT}
+            r={BAR_HEIGHT / 2}
+          >
             <Paint color={fillColor} />
           </RoundedRect>
         </Canvas>

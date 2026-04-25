@@ -1,4 +1,5 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Pressable, StyleSheet } from 'react-native';
+import { AppText } from '@shared/components/ui/app-text';
 import ViewShot from 'react-native-view-shot';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
@@ -21,7 +22,9 @@ function ShareCardContent() {
     >
       {/* Header */}
       <View className="items-center pt-4 pb-2">
-        <Text className="text-primary text-xl font-extrabold">Pawchi 🐾</Text>
+        <AppText fontFamily="heading" className="text-primary text-xl">
+          Pawchi 🐾
+        </AppText>
       </View>
 
       {/* Middle row */}
@@ -43,7 +46,12 @@ function ShareCardContent() {
           colors={['#FFE4EC', '#FFCBA4', '#D8C8F6']}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
-          style={{ flex: 1, borderRadius: 16, alignItems: 'center', justifyContent: 'center' }}
+          style={{
+            flex: 1,
+            borderRadius: 16,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
         >
           <DogSprite
             spriteId={profile.spriteId}
@@ -59,12 +67,14 @@ function ShareCardContent() {
 
       {/* Footer */}
       <View className="items-center py-3 gap-1">
-        <Text className="text-foreground text-base font-extrabold">{profile.name}</Text>
+        <AppText weight="extrabold" className="text-foreground text-base">
+          {profile.name}
+        </AppText>
         <View className="flex-row gap-2">
           <BreedChip text={profile.breed} variant="breed" />
           <BreedChip text={`Lv. ${profile.level}`} variant="level" />
         </View>
-        <Text className="text-muted text-xs mt-1">pawchi.app</Text>
+        <AppText className="text-muted text-xs mt-1">pawchi.app</AppText>
       </View>
     </View>
   );
@@ -84,9 +94,13 @@ export default function ShareScreen() {
       {/* Back button */}
       <View className="flex-row items-center px-5 pt-14 pb-4">
         <Pressable onPress={() => router.back()} className="py-2 pr-4">
-          <Text className="text-foreground-secondary font-semibold">← Back</Text>
+          <AppText weight="semibold" className="text-foreground-secondary">
+            ← Back
+          </AppText>
         </Pressable>
-        <Text className="text-foreground text-lg font-extrabold">Share Card</Text>
+        <AppText fontFamily="heading" className="text-foreground text-lg">
+          Share Card
+        </AppText>
       </View>
 
       {/* Preview */}
@@ -100,10 +114,19 @@ export default function ShareScreen() {
       </View>
 
       {/* Hidden off-screen capture target at 3x density */}
-      <View style={{ position: 'absolute', top: -9999, left: -9999, opacity: 0 }} pointerEvents="none">
+      <View
+        style={{ position: 'absolute', top: -9999, left: -9999, opacity: 0 }}
+        pointerEvents="none"
+      >
         <ViewShot
           ref={viewShotRef}
-          options={{ format: 'png', quality: 1, result: 'tmpfile', width: 1125, height: 1125 }}
+          options={{
+            format: 'png',
+            quality: 1,
+            result: 'tmpfile',
+            width: 1125,
+            height: 1125,
+          }}
         >
           <ShareCardContent />
         </ViewShot>
@@ -111,14 +134,29 @@ export default function ShareScreen() {
 
       {/* Actions */}
       <View className="gap-3 px-5 pt-6">
-        <Pressable onPress={shareCard} className="bg-primary rounded-[40px] py-4 items-center">
-          <Text className="text-white font-extrabold text-base">🔗 Share</Text>
+        <Pressable
+          onPress={shareCard}
+          className="bg-primary rounded-[40px] py-4 items-center"
+        >
+          <AppText weight="extrabold" className="text-white text-base">
+            🔗 Share
+          </AppText>
         </Pressable>
-        <Pressable onPress={saveToPhotos} className="bg-card border border-border rounded-[40px] py-4 items-center">
-          <Text className="text-foreground font-bold text-base">📸 Save to Photos</Text>
+        <Pressable
+          onPress={saveToPhotos}
+          className="bg-card border border-border rounded-[40px] py-4 items-center"
+        >
+          <AppText weight="bold" className="text-foreground text-base">
+            📸 Save to Photos
+          </AppText>
         </Pressable>
-        <Pressable onPress={copyImage} className="bg-card border border-border rounded-[40px] py-4 items-center">
-          <Text className="text-foreground font-bold text-base">📋 Copy Image</Text>
+        <Pressable
+          onPress={copyImage}
+          className="bg-card border border-border rounded-[40px] py-4 items-center"
+        >
+          <AppText weight="bold" className="text-foreground text-base">
+            📋 Copy Image
+          </AppText>
         </Pressable>
       </View>
     </View>

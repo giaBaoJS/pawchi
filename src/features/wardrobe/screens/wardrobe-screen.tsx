@@ -1,11 +1,16 @@
-import { View, Text, Pressable, ScrollView } from 'react-native';
+import { View, Pressable, ScrollView } from 'react-native';
+import { AppText } from '@shared/components/ui/app-text';
 import { LegendList } from '@legendapp/list';
 import { StageBg } from '@shared/components/ui/stage-bg';
 import { DogSprite } from '@features/dog/components/dog-sprite';
 import { useDogProfile } from '@features/dog/stores/dog-store';
 import { useWardrobe } from '../hooks/use-wardrobe';
 import { cn } from '@lib/cn';
-import type { WardrobeCategory, WardrobeItem, OutfitSlot } from '../types/wardrobe-types';
+import type {
+  WardrobeCategory,
+  WardrobeItem,
+  OutfitSlot,
+} from '../types/wardrobe-types';
 
 const CATEGORIES: { key: WardrobeCategory; label: string }[] = [
   { key: 'all', label: 'All' },
@@ -32,18 +37,22 @@ function ItemCell({ item, selected, locked, onPress }: ItemCellProps) {
         locked && 'opacity-40',
       )}
     >
-      <Text style={{ fontSize: 32 }}>{item.emoji}</Text>
-      <Text className="text-foreground text-xs font-semibold text-center px-1" numberOfLines={1}>
+      <AppText style={{ fontSize: 32 }}>{item.emoji}</AppText>
+      <AppText
+        weight="semibold"
+        className="text-foreground text-xs text-center px-1"
+        numberOfLines={1}
+      >
         {item.name}
-      </Text>
+      </AppText>
       {selected && (
         <View className="absolute top-1 right-1 bg-primary rounded-full w-4 h-4 items-center justify-center">
-          <Text className="text-white text-xs">✓</Text>
+          <AppText className="text-white text-xs">✓</AppText>
         </View>
       )}
       {locked && (
         <View className="absolute bottom-1 right-1">
-          <Text className="text-xs">🔒</Text>
+          <AppText className="text-xs">🔒</AppText>
         </View>
       )}
     </Pressable>
@@ -52,8 +61,15 @@ function ItemCell({ item, selected, locked, onPress }: ItemCellProps) {
 
 export default function WardrobeScreen() {
   const profile = useDogProfile();
-  const { activeCategory, setActiveCategory, filteredItems, handleSelectItem, isSelected, isLocked, outfit } =
-    useWardrobe();
+  const {
+    activeCategory,
+    setActiveCategory,
+    filteredItems,
+    handleSelectItem,
+    isSelected,
+    isLocked,
+    outfit,
+  } = useWardrobe();
 
   return (
     <View className="flex-1 bg-background">
@@ -68,14 +84,18 @@ export default function WardrobeScreen() {
               outfit={outfit}
             />
           ) : (
-            <Text style={{ fontSize: 60 }}>🐶</Text>
+            <AppText style={{ fontSize: 60 }}>🐶</AppText>
           )}
         </View>
       </StageBg>
 
       {/* Category tabs */}
       <View className="py-3">
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-4 gap-2">
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerClassName="px-4 gap-2"
+        >
           {CATEGORIES.map(({ key, label }) => (
             <Pressable
               key={key}
@@ -85,14 +105,14 @@ export default function WardrobeScreen() {
                 activeCategory === key ? 'bg-primary' : 'bg-card',
               )}
             >
-              <Text
+              <AppText
                 className={cn(
                   'text-sm font-bold',
                   activeCategory === key ? 'text-white' : 'text-muted',
                 )}
               >
                 {label}
-              </Text>
+              </AppText>
             </Pressable>
           ))}
         </ScrollView>
@@ -101,16 +121,22 @@ export default function WardrobeScreen() {
       {/* Item grid */}
       <LegendList
         data={filteredItems}
-        keyExtractor={(item) => item.id}
+        keyExtractor={item => item.id}
         numColumns={4}
         recycleItems
-        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 32, gap: 12 }}
+        contentContainerStyle={{
+          paddingHorizontal: 16,
+          paddingBottom: 32,
+          gap: 12,
+        }}
         renderItem={({ item }) => (
           <ItemCell
             item={item}
             selected={isSelected(item.id, item.category as OutfitSlot)}
             locked={isLocked(item.unlockLevel)}
-            onPress={() => handleSelectItem(item.id, item.category as OutfitSlot)}
+            onPress={() =>
+              handleSelectItem(item.id, item.category as OutfitSlot)
+            }
           />
         )}
       />

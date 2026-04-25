@@ -65,7 +65,10 @@ export function ShimmerCta({
   }));
 
   const shimmerStyle = useAnimatedStyle(() => {
-    if (btnWidth === 0) return { transform: [{ translateX: -btnWidth * SHIMMER_WIDTH_MULTIPLIER }] };
+    if (btnWidth === 0)
+      return {
+        transform: [{ translateX: -btnWidth * SHIMMER_WIDTH_MULTIPLIER }],
+      };
     const offset = shimmer.value * btnWidth;
     return {
       transform: [{ translateX: offset - btnWidth * 0.5 }],
@@ -76,7 +79,10 @@ export function ShimmerCta({
 
   return (
     <Animated.View style={[{ width: '100%' }, containerStyle]}>
-      <View style={{ overflow: 'hidden', borderRadius: 999 }} onLayout={handleLayout}>
+      <View
+        style={{ overflow: 'hidden', borderRadius: 999 }}
+        onLayout={handleLayout}
+      >
         <KawaiiButton
           tone={tone}
           label={label}

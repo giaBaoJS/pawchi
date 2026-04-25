@@ -1,35 +1,36 @@
 import {
   DogAnimation,
   type DogAnimationRef,
-} from "@features/dog/components/dog-animation";
-import { DogSprite } from "@features/dog/components/dog-sprite";
-import { useFormattedDogStats } from "@features/dog/hooks/use-dog-stats";
-import { useDogOutfit, useDogProfile } from "@features/dog/stores/dog-store";
+} from '@features/dog/components/dog-animation';
+import { DogSprite } from '@features/dog/components/dog-sprite';
+import { useFormattedDogStats } from '@features/dog/hooks/use-dog-stats';
+import { useDogOutfit, useDogProfile } from '@features/dog/stores/dog-store';
 import {
   useGameActions,
   useGameActionState,
-} from "@features/game/hooks/use-game-actions";
-import { BreedChip } from "@shared/components/ui/breed-chip";
-import { DogchiCard } from "@shared/components/ui/dogchi-card";
-import { StageBg } from "@shared/components/ui/stage-bg";
-import { StatBar } from "@shared/components/ui/stat-bar";
-import { mediumHaptic } from "@shared/utils/haptics";
-import { router } from "expo-router";
-import { useToast } from "heroui-native";
-import { useRef, useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+} from '@features/game/hooks/use-game-actions';
+import { BreedChip } from '@shared/components/ui/breed-chip';
+import { DogchiCard } from '@shared/components/ui/dogchi-card';
+import { StageBg } from '@shared/components/ui/stage-bg';
+import { StatBar } from '@shared/components/ui/stat-bar';
+import { mediumHaptic } from '@shared/utils/haptics';
+import { router } from 'expo-router';
+import { useToast } from 'heroui-native';
+import { useRef, useState } from 'react';
+import { Pressable, ScrollView, View } from 'react-native';
+import { AppText } from '@shared/components/ui/app-text';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
   withSequence,
   withTiming,
-} from "react-native-reanimated";
+} from 'react-native-reanimated';
 
-const ACTION_LABELS: Record<"feed" | "play" | "sleep", string> = {
-  feed: "🍖 Feed",
-  play: "🎾 Play",
-  sleep: "💤 Sleep",
+const ACTION_LABELS: Record<'feed' | 'play' | 'sleep', string> = {
+  feed: '🍖 Feed',
+  play: '🎾 Play',
+  sleep: '💤 Sleep',
 };
 
 function EmptyState() {
@@ -52,19 +53,19 @@ function EmptyState() {
     <View className="flex-1 bg-background items-center justify-center gap-6 px-8">
       <Animated.View style={animStyle}>
         <Pressable
-          onPress={() => router.push("/scan")}
+          onPress={() => router.push('/scan')}
           className="bg-primary rounded-full w-24 h-24 items-center justify-center"
         >
-          <Text style={{ fontSize: 40 }}>📷</Text>
+          <AppText style={{ fontSize: 40 }}>📷</AppText>
         </Pressable>
       </Animated.View>
       <View className="items-center gap-2">
-        <Text className="text-foreground text-xl font-extrabold">
+        <AppText fontFamily="heading" className="text-foreground text-xl">
           No dog yet!
-        </Text>
-        <Text className="text-foreground-secondary text-sm text-center">
+        </AppText>
+        <AppText className="text-foreground-secondary text-sm text-center">
           Snap a photo of your real dog to create your 2D companion.
-        </Text>
+        </AppText>
       </View>
     </View>
   );
@@ -86,28 +87,28 @@ export default function HomeScreen() {
   // Capture as const so TypeScript narrows to DogProfile (non-null) in all closures below
   const dog = profile;
 
-  function handleActionPress(action: "feed" | "play" | "sleep") {
-    if (action === "feed" && !canFeed) {
+  function handleActionPress(action: 'feed' | 'play' | 'sleep') {
+    if (action === 'feed' && !canFeed) {
       toast.show({
-        label: "Feed cooldown",
+        label: 'Feed cooldown',
         description: `Available in ${feedCooldown}`,
       });
       return;
     }
-    if (action === "sleep" && !canSleep) {
+    if (action === 'sleep' && !canSleep) {
       toast.show({
-        label: "Sleep cooldown",
+        label: 'Sleep cooldown',
         description: `Available in ${sleepCooldown}`,
       });
       return;
     }
 
     const result = performAction(action);
-    animRef.current?.triggerAction(action === "feed" ? "eat" : action);
+    animRef.current?.triggerAction(action === 'feed' ? 'eat' : action);
 
     if (result?.didLevelUp) {
       toast.show({
-        label: "🎉 Level Up!",
+        label: '🎉 Level Up!',
         description: `${dog.name} reached level ${dog.level + 1}!`,
       });
     }
@@ -115,7 +116,7 @@ export default function HomeScreen() {
 
   function handlePetDog() {
     mediumHaptic();
-    toast.show({ label: "🐾 Pet!", description: dog.personality.catchphrase });
+    toast.show({ label: '🐾 Pet!', description: dog.personality.catchphrase });
   }
 
   function handleLongPressDog() {
@@ -123,7 +124,7 @@ export default function HomeScreen() {
     setTimeout(() => setShowSpeechBubble(false), 3000);
   }
 
-  const moodValue = stats.find((s) => s.label === "Mood")?.value ?? 80;
+  const moodValue = stats.find(s => s.label === 'Mood')?.value ?? 80;
 
   return (
     <ScrollView className="flex-1 bg-background" bounces={false}>
@@ -132,14 +133,14 @@ export default function HomeScreen() {
         <View className="flex-1 items-center justify-end pb-4">
           {/* Dog name + chips */}
           <View className="absolute top-12 items-center gap-2">
-            <Text className="text-foreground text-lg font-extrabold">
+            <AppText fontFamily="heading" className="text-foreground text-lg">
               {dog.name}
-            </Text>
+            </AppText>
             <View className="flex-row gap-2">
               <BreedChip text={dog.breed} variant="breed" />
               <BreedChip text={`Lv. ${dog.level}`} variant="level" />
               <BreedChip
-                text={dog.personality.type.replace("_", " ")}
+                text={dog.personality.type.replace('_', ' ')}
                 variant="personality"
               />
             </View>
@@ -159,7 +160,7 @@ export default function HomeScreen() {
             />
             <View
               style={{
-                position: "absolute",
+                position: 'absolute',
                 top: 0,
                 left: 0,
                 right: 0,
@@ -173,9 +174,9 @@ export default function HomeScreen() {
           {/* Speech bubble */}
           {showSpeechBubble && (
             <View className="absolute top-16 bg-white rounded-[16px] px-4 py-2 border border-border">
-              <Text className="text-foreground text-sm font-semibold">
+              <AppText weight="semibold" className="text-foreground text-sm">
                 {dog.personality.catchphrase}
-              </Text>
+              </AppText>
             </View>
           )}
         </View>
@@ -184,7 +185,7 @@ export default function HomeScreen() {
       {/* Stat bars */}
       <View className="px-5 pt-5">
         <DogchiCard className="p-4 gap-3">
-          {stats.map((stat) => (
+          {stats.map(stat => (
             <StatBar
               key={stat.label}
               label={stat.label}
@@ -197,14 +198,14 @@ export default function HomeScreen() {
 
       {/* Action buttons */}
       <View className="flex-row gap-3 px-5 pt-4 pb-8">
-        {(["feed", "play", "sleep"] as const).map((action) => {
+        {(['feed', 'play', 'sleep'] as const).map(action => {
           const isDisabled =
-            (action === "feed" && !canFeed) ||
-            (action === "sleep" && !canSleep);
+            (action === 'feed' && !canFeed) ||
+            (action === 'sleep' && !canSleep);
           const cooldownText =
-            action === "feed" && !canFeed
+            action === 'feed' && !canFeed
               ? feedCooldown
-              : action === "sleep" && !canSleep
+              : action === 'sleep' && !canSleep
                 ? sleepCooldown
                 : null;
 
@@ -213,13 +214,13 @@ export default function HomeScreen() {
               key={action}
               onPress={() => handleActionPress(action)}
               className="flex-1 rounded-[40px] py-3 items-center"
-              style={{ backgroundColor: isDisabled ? "#F2D8E1" : "#FFAFCC" }}
+              style={{ backgroundColor: isDisabled ? '#F2D8E1' : '#FFAFCC' }}
             >
-              <Text className="text-foreground font-extrabold text-sm">
+              <AppText weight="extrabold" className="text-foreground text-sm">
                 {ACTION_LABELS[action]}
-              </Text>
+              </AppText>
               {cooldownText !== null && (
-                <Text className="text-muted text-xs">{cooldownText}</Text>
+                <AppText className="text-muted text-xs">{cooldownText}</AppText>
               )}
             </Pressable>
           );

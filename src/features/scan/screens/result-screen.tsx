@@ -6,7 +6,8 @@ import { KawaiiScreen } from '@shared/components/ui/kawaii-screen';
 import { useMutation } from '@tanstack/react-query';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
+import { AppText } from '@shared/components/ui/app-text';
 import { AIParseError, DogNotFoundError } from '../types/ai-types';
 import type { BreedDetectionResult } from '../types/ai-types';
 
@@ -51,7 +52,11 @@ export default function ResultScreen() {
     return (
       <ErrorView
         isDogNotFound={isDogNotFound}
-        message={isParseError ? 'AI response was invalid. Please try again.' : error.message}
+        message={
+          isParseError
+            ? 'AI response was invalid. Please try again.'
+            : error.message
+        }
         onRetake={onRetake}
       />
     );
@@ -72,13 +77,19 @@ export default function ResultScreen() {
 
         <View className="px-5 pt-6 gap-5">
           <View className="items-center gap-2">
-            <Text className="text-foreground text-3xl font-extrabold text-center -tracking-wide">
+            <AppText
+              fontFamily="heading"
+              className="text-foreground text-3xl text-center -tracking-wide"
+            >
               {data.breed}
-            </Text>
+            </AppText>
             <View className="bg-overlay border border-border-soft px-3.5 py-1.5 rounded-full">
-              <Text className="text-foreground-secondary text-xs font-bold">
+              <AppText
+                weight="bold"
+                className="text-foreground-secondary text-xs"
+              >
                 {Math.round(data.confidence * 100)}% confident
-              </Text>
+              </AppText>
             </View>
           </View>
 
@@ -89,8 +100,16 @@ export default function ResultScreen() {
           </View>
 
           <View className="gap-3">
-            <KawaiiButton tone="primary" onPress={onContinue} label="Continue" />
-            <KawaiiButton tone="soft" onPress={onRetake} label="Try another photo" />
+            <KawaiiButton
+              tone="primary"
+              onPress={onContinue}
+              label="Continue"
+            />
+            <KawaiiButton
+              tone="soft"
+              onPress={onRetake}
+              label="Try another photo"
+            />
           </View>
         </View>
       </ScrollView>
@@ -105,8 +124,12 @@ function capitalize(s: string) {
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
     <View className="flex-row items-center justify-between">
-      <Text className="text-foreground-secondary text-sm font-semibold">{label}</Text>
-      <Text className="text-foreground font-extrabold text-sm">{value}</Text>
+      <AppText weight="semibold" className="text-foreground-secondary text-sm">
+        {label}
+      </AppText>
+      <AppText weight="extrabold" className="text-foreground text-sm">
+        {value}
+      </AppText>
     </View>
   );
 }
@@ -123,10 +146,15 @@ function LoadingView({ photoUri }: { photoUri: string }) {
       </View>
       <View className="flex-1 items-center justify-center gap-5 px-8">
         <IconCard icon="search" size="lg" tone="primary" />
-        <Text className="text-foreground text-xl font-extrabold">Analyzing…</Text>
-        <Text className="text-foreground-secondary text-sm text-center font-medium">
+        <AppText fontFamily="heading" className="text-foreground text-xl">
+          Analyzing…
+        </AppText>
+        <AppText
+          weight="medium"
+          className="text-foreground-secondary text-sm text-center"
+        >
           Identifying your dog&apos;s breed
-        </Text>
+        </AppText>
       </View>
     </KawaiiScreen>
   );
@@ -148,16 +176,27 @@ function ErrorView({ isDogNotFound, message, onRetake }: ErrorViewProps) {
           tone="primary"
         />
         <View className="items-center gap-3">
-          <Text className="text-foreground text-xl font-extrabold text-center">
+          <AppText
+            fontFamily="heading"
+            className="text-foreground text-xl text-center"
+          >
             {isDogNotFound ? 'No dog found!' : 'Something went wrong'}
-          </Text>
-          <Text className="text-foreground-secondary text-sm text-center font-medium leading-5">
+          </AppText>
+          <AppText
+            weight="medium"
+            className="text-foreground-secondary text-sm text-center leading-5"
+          >
             {isDogNotFound
               ? 'We could not detect a dog in this photo. Make sure your dog is clearly visible.'
               : message}
-          </Text>
+          </AppText>
         </View>
-        <KawaiiButton tone="primary" onPress={onRetake} label="Try Again" className="px-8" />
+        <KawaiiButton
+          tone="primary"
+          onPress={onRetake}
+          label="Try Again"
+          className="px-8"
+        />
       </View>
     </KawaiiScreen>
   );

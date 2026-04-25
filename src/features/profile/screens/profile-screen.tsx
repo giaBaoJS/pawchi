@@ -1,11 +1,16 @@
-import { View, Text, Pressable, ScrollView, Alert } from 'react-native';
+import { View, Pressable, ScrollView, Alert } from 'react-native';
+import { AppText } from '@shared/components/ui/app-text';
 import { router } from 'expo-router';
 import { Image } from '@shared/components/styled';
 import { DogchiCard } from '@shared/components/ui/dogchi-card';
 import { BreedChip } from '@shared/components/ui/breed-chip';
 import { StageBg } from '@shared/components/ui/stage-bg';
 import { DogSprite } from '@features/dog/components/dog-sprite';
-import { useDogProfile, useDogOutfit, useClearDog } from '@features/dog/stores/dog-store';
+import {
+  useDogProfile,
+  useDogOutfit,
+  useClearDog,
+} from '@features/dog/stores/dog-store';
 import { xpThresholdForLevel } from '@features/game/utils/level-system';
 
 export default function ProfileScreen() {
@@ -16,13 +21,23 @@ export default function ProfileScreen() {
   if (!profile) {
     return (
       <View className="flex-1 bg-background items-center justify-center gap-4 px-8">
-        <Text style={{ fontSize: 60 }}>🐾</Text>
-        <Text className="text-foreground text-xl font-extrabold text-center">No dog yet</Text>
-        <Text className="text-foreground-secondary text-sm text-center">
+        <AppText style={{ fontSize: 60 }}>🐾</AppText>
+        <AppText
+          weight="extrabold"
+          className="text-foreground text-xl text-center"
+        >
+          No dog yet
+        </AppText>
+        <AppText className="text-foreground-secondary text-sm text-center">
           Scan your dog to create your digital companion.
-        </Text>
-        <Pressable onPress={() => router.push('/scan')} className="bg-primary rounded-[40px] px-10 py-4">
-          <Text className="text-white font-extrabold">Scan My Dog</Text>
+        </AppText>
+        <Pressable
+          onPress={() => router.push('/scan')}
+          className="bg-primary rounded-[40px] px-10 py-4"
+        >
+          <AppText weight="extrabold" className="text-white">
+            Scan My Dog
+          </AppText>
         </Pressable>
       </View>
     );
@@ -66,19 +81,30 @@ export default function ProfileScreen() {
       <View className="px-5 pt-5 gap-4 pb-10">
         {/* Identity */}
         <View className="items-center gap-2">
-          <Text className="text-foreground text-2xl font-extrabold">{profile.name}</Text>
-          <Text className="text-foreground-secondary text-sm">{profile.personality.title}</Text>
+          <AppText fontFamily="heading" className="text-foreground text-2xl">
+            {profile.name}
+          </AppText>
+          <AppText className="text-foreground-secondary text-sm">
+            {profile.personality.title}
+          </AppText>
           <View className="flex-row gap-2 flex-wrap justify-center">
             <BreedChip text={profile.breed} variant="breed" />
-            <BreedChip text={profile.personality.type.replace('_', ' ')} variant="personality" />
+            <BreedChip
+              text={profile.personality.type.replace('_', ' ')}
+              variant="personality"
+            />
           </View>
         </View>
 
         {/* XP bar */}
         <DogchiCard className="p-4 gap-2">
           <View className="flex-row justify-between">
-            <Text className="text-foreground font-bold">Level {profile.level}</Text>
-            <Text className="text-muted text-sm">{profile.xp} / {xpThreshold} XP</Text>
+            <AppText weight="bold" className="text-foreground">
+              Level {profile.level}
+            </AppText>
+            <AppText className="text-muted text-sm">
+              {profile.xp} / {xpThreshold} XP
+            </AppText>
           </View>
           <View className="h-3 bg-card-alt rounded-full overflow-hidden">
             <View
@@ -96,22 +122,34 @@ export default function ProfileScreen() {
             contentFit="cover"
           />
           <View className="p-3">
-            <Text className="text-foreground-secondary text-xs text-center font-semibold">
+            <AppText
+              weight="semibold"
+              className="text-foreground-secondary text-xs text-center"
+            >
               The real {profile.name} 🐶
-            </Text>
+            </AppText>
           </View>
         </DogchiCard>
 
         {/* Personality stats */}
         <DogchiCard className="p-4 gap-2">
-          <Text className="text-foreground font-bold mb-1">Personality Stats</Text>
+          <AppText weight="bold" className="text-foreground mb-1">
+            Personality Stats
+          </AppText>
           {Object.entries(profile.personality.stats).map(([key, value]) => (
             <View key={key} className="flex-row items-center gap-3">
-              <Text className="text-foreground-secondary text-sm capitalize w-20">{key}</Text>
+              <AppText className="text-foreground-secondary text-sm capitalize w-20">
+                {key}
+              </AppText>
               <View className="flex-1 h-2 bg-card-alt rounded-full overflow-hidden">
-                <View className="h-full bg-personality rounded-full" style={{ width: `${value}%` }} />
+                <View
+                  className="h-full bg-personality rounded-full"
+                  style={{ width: `${value}%` }}
+                />
               </View>
-              <Text className="text-muted text-xs w-8 text-right">{value}</Text>
+              <AppText className="text-muted text-xs w-8 text-right">
+                {value}
+              </AppText>
             </View>
           ))}
         </DogchiCard>
@@ -121,12 +159,16 @@ export default function ProfileScreen() {
           onPress={() => router.push('/share')}
           className="bg-primary rounded-[40px] py-4 items-center"
         >
-          <Text className="text-white font-extrabold text-base">🎴 Share Card</Text>
+          <AppText weight="extrabold" className="text-white text-base">
+            🎴 Share Card
+          </AppText>
         </Pressable>
 
         {/* Danger zone */}
         <Pressable onPress={handleResetDog} className="py-3 items-center">
-          <Text className="text-danger text-sm font-semibold">Remove my dog</Text>
+          <AppText weight="semibold" className="text-danger text-sm">
+            Remove my dog
+          </AppText>
         </Pressable>
       </View>
     </ScrollView>

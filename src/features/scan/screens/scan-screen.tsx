@@ -6,7 +6,8 @@ import { heavyHaptic, lightHaptic } from '@shared/utils/haptics';
 import * as ImagePicker from 'expo-image-picker';
 import { router } from 'expo-router';
 import { useRef } from 'react';
-import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Linking, Pressable, StyleSheet, View } from 'react-native';
+import { AppText } from '@shared/components/ui/app-text';
 import {
   Camera,
   useCameraDevice,
@@ -26,7 +27,10 @@ async function pickFromGallery() {
   if (result.canceled || result.assets.length === 0) return;
   const { uri } = result.assets[0];
   const { base64, uri: processedUri } = await preprocessImage(uri);
-  router.push({ pathname: '/result', params: { base64, photoUri: processedUri } });
+  router.push({
+    pathname: '/result',
+    params: { base64, photoUri: processedUri },
+  });
 }
 
 function BackButton() {
@@ -47,13 +51,19 @@ function NoCameraView() {
       <BackButton />
       <View className="flex-1 items-center justify-center px-8">
         <IconCard icon="phone-portrait-outline" size="lg" tone="primary" />
-        <Text className="mt-7 text-foreground text-2xl font-extrabold text-center">
+        <AppText
+          fontFamily="heading"
+          className="mt-7 text-foreground text-2xl text-center"
+        >
           Simulator detected
-        </Text>
-        <Text className="mt-2.5 text-foreground-secondary text-base text-center font-medium leading-6">
+        </AppText>
+        <AppText
+          weight="medium"
+          className="mt-2.5 text-foreground-secondary text-base text-center leading-6"
+        >
           iOS Simulator has no camera.{'\n'}
           Pick a dog photo from your library to test the full flow.
-        </Text>
+        </AppText>
         <View className="h-7" />
         <View className="w-full">
           <KawaiiButton
@@ -72,19 +82,28 @@ interface PermissionDeniedViewProps {
   onRequest: () => void;
 }
 
-function PermissionDeniedView({ canAsk, onRequest }: PermissionDeniedViewProps) {
+function PermissionDeniedView({
+  canAsk,
+  onRequest,
+}: PermissionDeniedViewProps) {
   const muted = useCSSVariable('--color-foreground-secondary') as string;
   return (
     <KawaiiScreen edges={['top', 'bottom']}>
       <BackButton />
       <View className="flex-1 items-center justify-center px-8">
         <IconCard icon="camera-outline" size="lg" tone="primary" />
-        <Text className="mt-7 text-foreground text-2xl font-extrabold text-center">
+        <AppText
+          fontFamily="heading"
+          className="mt-7 text-foreground text-2xl text-center"
+        >
           Camera access needed
-        </Text>
-        <Text className="mt-2.5 text-foreground-secondary text-base text-center font-medium leading-6">
+        </AppText>
+        <AppText
+          weight="medium"
+          className="mt-2.5 text-foreground-secondary text-base text-center leading-6"
+        >
           Allow camera access to scan your dog and detect their breed instantly.
-        </Text>
+        </AppText>
         <View className="h-7" />
         <View className="w-full">
           <KawaiiButton
@@ -98,9 +117,12 @@ function PermissionDeniedView({ canAsk, onRequest }: PermissionDeniedViewProps) 
           className="mt-3 flex-row items-center py-3"
         >
           <Ionicons name="images-outline" size={18} color={muted} />
-          <Text className="ml-2 text-foreground-secondary text-sm font-semibold">
+          <AppText
+            weight="semibold"
+            className="ml-2 text-foreground-secondary text-sm"
+          >
             Use Photo Library
-          </Text>
+          </AppText>
         </Pressable>
       </View>
     </KawaiiScreen>
@@ -143,9 +165,9 @@ function ActiveCamera({ device }: { device: CameraDevice }) {
 
         <View className="flex-row items-center bg-black/30 px-3.5 py-2 rounded-full">
           <Ionicons name="paw" size={16} color="#fff" />
-          <Text className="ml-1.5 text-white text-sm font-semibold">
+          <AppText weight="semibold" className="ml-1.5 text-white text-sm">
             Scan your dog
-          </Text>
+          </AppText>
         </View>
 
         <Pressable
@@ -160,24 +182,43 @@ function ActiveCamera({ device }: { device: CameraDevice }) {
         <View className="w-[270px] h-[270px] relative">
           <View
             className="absolute top-0 left-0 w-6 h-6 rounded-tl-lg"
-            style={{ borderTopWidth: 3, borderLeftWidth: 3, borderColor: cornerColor }}
+            style={{
+              borderTopWidth: 3,
+              borderLeftWidth: 3,
+              borderColor: cornerColor,
+            }}
           />
           <View
             className="absolute top-0 right-0 w-6 h-6 rounded-tr-lg"
-            style={{ borderTopWidth: 3, borderRightWidth: 3, borderColor: cornerColor }}
+            style={{
+              borderTopWidth: 3,
+              borderRightWidth: 3,
+              borderColor: cornerColor,
+            }}
           />
           <View
             className="absolute bottom-0 left-0 w-6 h-6 rounded-bl-lg"
-            style={{ borderBottomWidth: 3, borderLeftWidth: 3, borderColor: cornerColor }}
+            style={{
+              borderBottomWidth: 3,
+              borderLeftWidth: 3,
+              borderColor: cornerColor,
+            }}
           />
           <View
             className="absolute bottom-0 right-0 w-6 h-6 rounded-br-lg"
-            style={{ borderBottomWidth: 3, borderRightWidth: 3, borderColor: cornerColor }}
+            style={{
+              borderBottomWidth: 3,
+              borderRightWidth: 3,
+              borderColor: cornerColor,
+            }}
           />
         </View>
-        <Text className="mt-6 text-white/85 text-sm font-semibold text-center">
+        <AppText
+          weight="semibold"
+          className="mt-6 text-white/85 text-sm text-center"
+        >
           Center your dog in the frame
-        </Text>
+        </AppText>
       </View>
 
       <View className="absolute bottom-14 left-0 right-0 flex-row items-center justify-between px-12">

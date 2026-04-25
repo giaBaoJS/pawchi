@@ -6,7 +6,8 @@ import { KawaiiButton } from '@shared/components/ui/kawaii-button';
 import { KawaiiScreen } from '@shared/components/ui/kawaii-screen';
 import { router } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import { AppState, Text, View } from 'react-native';
+import { AppState, View } from 'react-native';
+import { AppText } from '@shared/components/ui/app-text';
 import { useCSSVariable } from 'uniwind';
 import { useWalkLocation } from '../hooks/use-walk-location';
 import { useWalkTimer } from '../hooks/use-walk-timer';
@@ -23,7 +24,7 @@ export default function WalkScreen() {
   const energyColor = useCSSVariable('--color-energy') as string;
 
   useEffect(() => {
-    const sub = AppState.addEventListener('change', (state) => {
+    const sub = AppState.addEventListener('change', state => {
       if (state === 'background' || state === 'inactive') {
         backgroundedAtRef.current = Date.now();
       } else if (state === 'active' && backgroundedAtRef.current) {
@@ -48,14 +49,17 @@ export default function WalkScreen() {
     if (!rewards.tooShort) {
       useGamificationStore.getState().creditBones(rewards.bones);
       useGamificationStore.getState().addExp(rewards.exp);
-      useDailyMissionsStore.getState().recordEvent('walked-minutes', rewards.minutesCounted);
+      useDailyMissionsStore
+        .getState()
+        .recordEvent('walked-minutes', rewards.minutesCounted);
     }
 
     router.replace({
       pathname: '/walk-summary',
       params: {
         durationSeconds: String(duration),
-        distanceMeters: distanceMeters != null ? String(Math.round(distanceMeters)) : '',
+        distanceMeters:
+          distanceMeters != null ? String(Math.round(distanceMeters)) : '',
         bones: String(rewards.bones),
         exp: String(rewards.exp),
         tooShort: rewards.tooShort ? '1' : '0',
@@ -67,39 +71,53 @@ export default function WalkScreen() {
     <KawaiiScreen>
       <View className="flex-1 items-center justify-center gap-8 px-6">
         <IconCard icon="walk" size="lg" tone="energy" />
-        <Text className="text-foreground-secondary uppercase tracking-widest text-xs font-extrabold">
+        <AppText
+          weight="extrabold"
+          className="text-foreground-secondary uppercase tracking-widest text-xs"
+        >
           Walking
-        </Text>
-        <Text
-          className="text-foreground text-7xl font-extrabold -tracking-wider"
+        </AppText>
+        <AppText
+          weight="extrabold"
+          className="text-foreground text-7xl -tracking-wider"
           style={{ fontVariant: ['tabular-nums'] }}
         >
           {elapsedLabel}
-        </Text>
+        </AppText>
         <View className="items-center gap-2">
           {hasPermission && distanceMeters != null ? (
             <View className="flex-row items-center gap-2 bg-overlay border border-border-soft px-4 py-2 rounded-full">
               <Ionicons name="location" size={14} color={energyColor} />
-              <Text className="text-foreground text-sm font-extrabold">
+              <AppText weight="extrabold" className="text-foreground text-sm">
                 {(distanceMeters / 1000).toFixed(2)} km
-              </Text>
+              </AppText>
             </View>
           ) : (
             <View className="bg-overlay border border-border-soft px-4 py-2 rounded-full">
-              <Text className="text-foreground-secondary text-xs font-bold">
+              <AppText
+                weight="bold"
+                className="text-foreground-secondary text-xs"
+              >
                 Distance tracking off
-              </Text>
+              </AppText>
             </View>
           )}
-          <Text className="text-foreground-secondary text-xs font-medium">
+          <AppText
+            weight="medium"
+            className="text-foreground-secondary text-xs"
+          >
             {durationSeconds < 60
               ? 'Walk at least 1 min for rewards'
               : 'Earning bones + EXP'}
-          </Text>
+          </AppText>
         </View>
       </View>
       <View className="px-6 pb-4">
-        <KawaiiButton tone="primary" onPress={() => endWalk()} label="End walk" />
+        <KawaiiButton
+          tone="primary"
+          onPress={() => endWalk()}
+          label="End walk"
+        />
       </View>
     </KawaiiScreen>
   );

@@ -13,10 +13,10 @@ import {
   Platform,
   Pressable,
   ScrollView,
-  Text,
   TextInput,
   View,
 } from 'react-native';
+import { AppText } from '@shared/components/ui/app-text';
 import { useCSSVariable } from 'uniwind';
 import { useDogProfileStore } from '../stores/dog-profile-store';
 import type { BodySize, DogProfile } from '../types/dog-profile';
@@ -61,15 +61,16 @@ export default function NameDogScreen() {
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [gender, setGender] = useState<Gender | null>(null);
   const [showReplaceDialog, setShowReplaceDialog] = useState(false);
-  const existingProfile = useDogProfileStore((s) => s.profile);
-  const setProfile = useDogProfileStore((s) => s.setProfile);
+  const existingProfile = useDogProfileStore(s => s.profile);
+  const setProfile = useDogProfileStore(s => s.setProfile);
   const placeholder = useCSSVariable('--color-muted') as string;
 
   const trimmed = name.trim();
   const isNameValid = trimmed.length >= 1 && trimmed.length <= 20;
-  const dob = selectedMonth != null && selectedYear != null
-    ? makeDobEpoch(selectedYear, selectedMonth)
-    : null;
+  const dob =
+    selectedMonth != null && selectedYear != null
+      ? makeDobEpoch(selectedYear, selectedMonth)
+      : null;
   const isDobValid = dob != null;
   const isGenderValid = gender != null;
   const canContinue =
@@ -145,7 +146,7 @@ export default function NameDogScreen() {
       router.back();
       return;
     }
-    setStep((current) => (current - 1) as OnboardingStep);
+    setStep(current => (current - 1) as OnboardingStep);
   }
 
   return (
@@ -168,9 +169,12 @@ export default function NameDogScreen() {
               </View>
             ) : null}
             <View className="bg-overlay border border-border-soft px-4 py-1.5 rounded-full">
-              <Text className="text-foreground-secondary text-xs font-bold">
+              <AppText
+                weight="bold"
+                className="text-foreground-secondary text-xs"
+              >
                 {breed}
-              </Text>
+              </AppText>
             </View>
           </View>
 
@@ -259,9 +263,12 @@ function NameStep({
 }) {
   return (
     <View className="gap-3">
-      <Text className="text-foreground text-2xl font-extrabold text-center -tracking-wide">
+      <AppText
+        fontFamily="heading"
+        className="text-foreground text-2xl text-center -tracking-wide"
+      >
         What&apos;s your dog&apos;s name?
-      </Text>
+      </AppText>
       <TextInput
         value={name}
         onChangeText={onNameChange}
@@ -273,9 +280,12 @@ function NameStep({
         returnKeyType="next"
         onSubmitEditing={onSubmit}
       />
-      <Text className="text-foreground-secondary text-xs text-center font-medium">
+      <AppText
+        weight="medium"
+        className="text-foreground-secondary text-xs text-center"
+      >
         1-20 characters
-      </Text>
+      </AppText>
     </View>
   );
 }
@@ -296,18 +306,24 @@ function DobStep({
   return (
     <View className="gap-5">
       <View className="gap-2">
-        <Text className="text-foreground text-2xl font-extrabold text-center -tracking-wide">
+        <AppText
+          fontFamily="heading"
+          className="text-foreground text-2xl text-center -tracking-wide"
+        >
           When was your dog born?
-        </Text>
-        <Text className="text-foreground-secondary text-sm text-center font-medium">
+        </AppText>
+        <AppText
+          weight="medium"
+          className="text-foreground-secondary text-sm text-center"
+        >
           Choose the closest month and year.
-        </Text>
+        </AppText>
       </View>
 
       <View className="gap-3">
-        <Text className="text-foreground-secondary text-xs font-bold">
+        <AppText weight="bold" className="text-foreground-secondary text-xs">
           Month
-        </Text>
+        </AppText>
         <View className="flex-row flex-wrap gap-2">
           {MONTHS.map((month, index) => (
             <ChoicePill
@@ -321,12 +337,12 @@ function DobStep({
       </View>
 
       <View className="gap-3">
-        <Text className="text-foreground-secondary text-xs font-bold">
+        <AppText weight="bold" className="text-foreground-secondary text-xs">
           Year
-        </Text>
+        </AppText>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View className="flex-row gap-2 pr-6">
-            {years.map((year) => (
+            {years.map(year => (
               <ChoicePill
                 key={year}
                 label={String(year)}
@@ -351,12 +367,18 @@ function GenderStep({
   return (
     <View className="gap-5">
       <View className="gap-2">
-        <Text className="text-foreground text-2xl font-extrabold text-center -tracking-wide">
+        <AppText
+          fontFamily="heading"
+          className="text-foreground text-2xl text-center -tracking-wide"
+        >
           What&apos;s their gender?
-        </Text>
-        <Text className="text-foreground-secondary text-sm text-center font-medium">
+        </AppText>
+        <AppText
+          weight="medium"
+          className="text-foreground-secondary text-sm text-center"
+        >
           Pick one for their profile.
-        </Text>
+        </AppText>
       </View>
 
       <View className="bg-overlay border border-border-soft rounded-3xl p-2 flex-row gap-2">
@@ -394,14 +416,14 @@ function ChoicePill({
           : 'bg-overlay border-border-soft',
       )}
     >
-      <Text
+      <AppText
         className={cn(
           'text-sm font-extrabold',
           isSelected ? 'text-background' : 'text-foreground-secondary',
         )}
       >
         {label}
-      </Text>
+      </AppText>
     </Pressable>
   );
 }
@@ -423,14 +445,14 @@ function GenderOption({
         isSelected ? 'bg-primary' : 'bg-transparent',
       )}
     >
-      <Text
+      <AppText
         className={cn(
           'text-base font-extrabold',
           isSelected ? 'text-background' : 'text-foreground-secondary',
         )}
       >
         {label}
-      </Text>
+      </AppText>
     </Pressable>
   );
 }

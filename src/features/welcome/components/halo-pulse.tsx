@@ -14,12 +14,12 @@ interface HaloPulseProps {
 export function HaloPulse({ entryOpacity, haloPulse, color }: HaloPulseProps) {
   const outerOpacity = useDerivedValue(() => {
     'worklet';
-    return entryOpacity.value * (0.12 + haloPulse.value * 0.10);
+    return entryOpacity.value * (0.12 + haloPulse.value * 0.1);
   });
 
   const innerOpacity = useDerivedValue(() => {
     'worklet';
-    return entryOpacity.value * (0.20 + haloPulse.value * 0.12);
+    return entryOpacity.value * (0.2 + haloPulse.value * 0.12);
   });
 
   return (
@@ -32,11 +32,23 @@ export function HaloPulse({ entryOpacity, haloPulse, color }: HaloPulseProps) {
       pointerEvents="none"
     >
       {/* outer soft glow */}
-      <Circle cx={CENTER} cy={CENTER} r={90} color={color} opacity={outerOpacity}>
+      <Circle
+        cx={CENTER}
+        cy={CENTER}
+        r={90}
+        color={color}
+        opacity={outerOpacity}
+      >
         <BlurMask blur={35} style="normal" />
       </Circle>
       {/* inner warmer core */}
-      <Circle cx={CENTER} cy={CENTER} r={58} color={color} opacity={innerOpacity}>
+      <Circle
+        cx={CENTER}
+        cy={CENTER}
+        r={58}
+        color={color}
+        opacity={innerOpacity}
+      >
         <BlurMask blur={20} style="normal" />
       </Circle>
     </Canvas>

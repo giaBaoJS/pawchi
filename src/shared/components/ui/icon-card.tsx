@@ -40,7 +40,11 @@ const SHADOW_BY_SIZE = {
   lg: { offsetY: 8, opacity: 0.35, radius: 24, elevation: 10 },
 } as const;
 
-export function IconCard({ icon, size = 'md', tone = 'primary' }: IconCardProps) {
+export function IconCard({
+  icon,
+  size = 'md',
+  tone = 'primary',
+}: IconCardProps) {
   const iconColor = useCSSVariable(TONE_TO_VAR[tone]) as string;
   const shadowColor = useCSSVariable(TONE_TO_VAR[tone]) as string;
   const shadow = SHADOW_BY_SIZE[size];

@@ -1,8 +1,9 @@
+import { AppText } from '@shared/components/ui/app-text';
 import { KawaiiButton } from '@shared/components/ui/kawaii-button';
 import Constants from 'expo-constants';
 import { LinearGradient } from 'expo-linear-gradient';
 import { router } from 'expo-router';
-import { StatusBar, Text, View } from 'react-native';
+import { StatusBar, View } from 'react-native';
 import Animated, { useAnimatedStyle } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useCSSVariable } from 'uniwind';
@@ -94,15 +95,21 @@ export default function WelcomeScreen({
 
             <View className="items-center gap-2.5">
               <Animated.View style={titleStyle}>
-                <Text className="text-foreground text-[52px] font-extrabold tracking-tight">
+                <AppText
+                  fontFamily="heading"
+                  className="text-foreground text-[52px]"
+                >
                   Pawchi
-                </Text>
+                </AppText>
               </Animated.View>
 
               <Animated.View style={subtitleStyle}>
-                <Text className="text-muted text-center text-base font-medium leading-6">
+                <AppText
+                  weight="bold"
+                  className="text-muted text-center text-base leading-6"
+                >
                   Snap a photo,{'\n'}discover your dog&apos;s breed.
-                </Text>
+                </AppText>
               </Animated.View>
             </View>
 
@@ -138,9 +145,12 @@ export default function WelcomeScreen({
 
             {isApiKeyMissing && (
               <Animated.View style={skipStyle}>
-                <Text className="text-primary px-4 text-center text-xs font-medium">
+                <AppText
+                  weight="medium"
+                  className="text-primary px-4 text-center text-xs"
+                >
                   OpenAI API key not configured — add it to .env and rebuild
-                </Text>
+                </AppText>
               </Animated.View>
             )}
           </View>

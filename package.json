@@ -39,6 +39,7 @@
     "expo-linking": "~55.0.12",
     "expo-location": "^55.1.8",
     "expo-media-library": "~55.0.14",
+    "expo-mesh-gradient": "~55.0.13",
     "expo-router": "~55.0.12",
     "expo-secure-store": "~55.0.13",
     "expo-sharing": "~55.0.18",

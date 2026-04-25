@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, type ReactNode } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
+import { AppText } from '@shared/components/ui/app-text';
 import Animated, {
   Easing,
   interpolateColor,
@@ -49,9 +50,7 @@ export function KawaiiStepper({
   const primary = useCSSVariable('--color-primary') as string;
   const mood = useCSSVariable('--color-mood') as string;
   const border = useCSSVariable('--color-border-soft') as string;
-  const upcomingIcon = useCSSVariable(
-    '--color-foreground-secondary',
-  ) as string;
+  const upcomingIcon = useCSSVariable('--color-foreground-secondary') as string;
   const surface = useCSSVariable('--color-background') as string;
 
   return (
@@ -104,7 +103,7 @@ export function KawaiiStepper({
               style={isLast ? undefined : { flex: 1 }}
             >
               <View style={{ width: HALO_SIZE, alignItems: 'center' }}>
-                <Text
+                <AppText
                   className={
                     isActive
                       ? 'text-foreground text-xs font-extrabold text-center'
@@ -113,7 +112,7 @@ export function KawaiiStepper({
                   numberOfLines={1}
                 >
                   {step.label}
-                </Text>
+                </AppText>
               </View>
               {isLast ? null : <View style={{ flex: 1 }} />}
             </View>
@@ -246,11 +245,7 @@ function StepCircle({
           {step.renderIcon ? (
             step.renderIcon(state)
           ) : (
-            <Ionicons
-              name={step.icon ?? 'paw'}
-              size={22}
-              color={iconColor}
-            />
+            <Ionicons name={step.icon ?? 'paw'} size={22} color={iconColor} />
           )}
         </Animated.View>
       </Animated.View>

@@ -1,7 +1,13 @@
-import { View, Text, Pressable, ScrollView } from 'react-native';
+import { View, Pressable, ScrollView } from 'react-native';
+import { AppText } from '@shared/components/ui/app-text';
 import { LinearGradient } from 'expo-linear-gradient';
 import { LegendList } from '@legendapp/list';
-import { useRoomState, usePlaceItem, useRemoveItem, useSetActiveSeason } from '../stores/room-store';
+import {
+  useRoomState,
+  usePlaceItem,
+  useRemoveItem,
+  useSetActiveSeason,
+} from '../stores/room-store';
 import { ROOM_ITEMS } from '../constants/room-items';
 import { DogSprite } from '@features/dog/components/dog-sprite';
 import { useDogProfile, useDogOutfit } from '@features/dog/stores/dog-store';
@@ -45,7 +51,7 @@ export default function RoomScreen() {
 
   const season = resolveSeason(roomState?.activeSeason ?? 'auto');
   const gradient = SEASON_GRADIENTS[season];
-  const placedIds = new Set(roomState?.placedItems.map((i) => i.itemId) ?? []);
+  const placedIds = new Set(roomState?.placedItems.map(i => i.itemId) ?? []);
 
   return (
     <View className="flex-1 bg-background">
@@ -58,8 +64,8 @@ export default function RoomScreen() {
       >
         {/* Placed items */}
         <View className="flex-1">
-          {roomState?.placedItems.map((placed) => {
-            const item = ROOM_ITEMS.find((i) => i.id === placed.itemId);
+          {roomState?.placedItems.map(placed => {
+            const item = ROOM_ITEMS.find(i => i.id === placed.itemId);
             if (!item) return null;
             return (
               <Pressable
@@ -71,13 +77,20 @@ export default function RoomScreen() {
                   top: `${placed.y * 100}%`,
                 }}
               >
-                <Text style={{ fontSize: 32 }}>{item.emoji}</Text>
+                <AppText style={{ fontSize: 32 }}>{item.emoji}</AppText>
               </Pressable>
             );
           })}
 
           {/* Dog idle in room */}
-          <View style={{ position: 'absolute', bottom: 8, left: '50%', marginLeft: -90 }}>
+          <View
+            style={{
+              position: 'absolute',
+              bottom: 8,
+              left: '50%',
+              marginLeft: -90,
+            }}
+          >
             {profile ? (
               <DogSprite
                 spriteId={profile.spriteId}
@@ -86,7 +99,7 @@ export default function RoomScreen() {
                 outfit={outfit}
               />
             ) : (
-              <Text style={{ fontSize: 60 }}>🐶</Text>
+              <AppText style={{ fontSize: 60 }}>🐶</AppText>
             )}
           </View>
         </View>
@@ -94,25 +107,33 @@ export default function RoomScreen() {
 
       {/* Season switcher */}
       <View className="py-3">
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerClassName="px-4 gap-2">
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerClassName="px-4 gap-2"
+        >
           {SEASONS.map(({ key, label, emoji }) => (
             <Pressable
               key={key}
               onPress={() => setActiveSeason(key)}
               className={cn(
                 'flex-row items-center gap-1 rounded-full px-3 py-2',
-                (roomState?.activeSeason ?? 'auto') === key ? 'bg-primary' : 'bg-card',
+                (roomState?.activeSeason ?? 'auto') === key
+                  ? 'bg-primary'
+                  : 'bg-card',
               )}
             >
-              <Text>{emoji}</Text>
-              <Text
+              <AppText>{emoji}</AppText>
+              <AppText
                 className={cn(
                   'text-sm font-bold',
-                  (roomState?.activeSeason ?? 'auto') === key ? 'text-white' : 'text-muted',
+                  (roomState?.activeSeason ?? 'auto') === key
+                    ? 'text-white'
+                    : 'text-muted',
                 )}
               >
                 {label}
-              </Text>
+              </AppText>
             </Pressable>
           ))}
         </ScrollView>
@@ -121,10 +142,14 @@ export default function RoomScreen() {
       {/* Room items grid */}
       <LegendList
         data={ROOM_ITEMS}
-        keyExtractor={(item) => item.id}
+        keyExtractor={item => item.id}
         numColumns={4}
         recycleItems
-        contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 32, gap: 12 }}
+        contentContainerStyle={{
+          paddingHorizontal: 16,
+          paddingBottom: 32,
+          gap: 12,
+        }}
         renderItem={({ item }) => {
           const isPlaced = placedIds.has(item.id);
           return (
@@ -133,21 +158,31 @@ export default function RoomScreen() {
                 if (isPlaced) {
                   removeItem(item.id);
                 } else {
-                  placeItem({ itemId: item.id, x: 0.2 + Math.random() * 0.6, y: 0.1 + Math.random() * 0.5 });
+                  placeItem({
+                    itemId: item.id,
+                    x: 0.2 + Math.random() * 0.6,
+                    y: 0.1 + Math.random() * 0.5,
+                  });
                 }
               }}
               className={cn(
                 'rounded-[16px] aspect-square items-center justify-center gap-1 border',
-                isPlaced ? 'bg-white border-primary' : 'bg-card border-transparent',
+                isPlaced
+                  ? 'bg-white border-primary'
+                  : 'bg-card border-transparent',
               )}
             >
-              <Text style={{ fontSize: 28 }}>{item.emoji}</Text>
-              <Text className="text-foreground text-xs font-semibold text-center px-1" numberOfLines={1}>
+              <AppText style={{ fontSize: 28 }}>{item.emoji}</AppText>
+              <AppText
+                weight="semibold"
+                className="text-foreground text-xs text-center px-1"
+                numberOfLines={1}
+              >
                 {item.name}
-              </Text>
+              </AppText>
               {isPlaced && (
                 <View className="absolute top-1 right-1 bg-primary rounded-full w-4 h-4 items-center justify-center">
-                  <Text className="text-white text-xs">✓</Text>
+                  <AppText className="text-white text-xs">✓</AppText>
                 </View>
               )}
             </Pressable>

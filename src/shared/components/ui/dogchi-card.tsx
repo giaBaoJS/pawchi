@@ -9,7 +9,9 @@ interface DogchiCardProps {
 
 export function DogchiCard({ children, className }: DogchiCardProps) {
   return (
-    <View className={cn('bg-card rounded-[20px] border border-border', className)}>
+    <View
+      className={cn('bg-card rounded-[20px] border border-border', className)}
+    >
       {children}
     </View>
   );

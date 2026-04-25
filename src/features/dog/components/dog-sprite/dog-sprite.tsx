@@ -16,7 +16,12 @@ interface DogSpriteProps {
 }
 
 // React Compiler handles memoization — no React.memo needed
-export function DogSprite({ spriteId, coatColor, mood, outfit }: DogSpriteProps) {
+export function DogSprite({
+  spriteId,
+  coatColor,
+  mood,
+  outfit,
+}: DogSpriteProps) {
   const paths = useMemo(() => BREED_PATHS[spriteId], [spriteId]);
 
   const bodyPaint = useMemo(() => {
@@ -51,14 +56,17 @@ export function DogSprite({ spriteId, coatColor, mood, outfit }: DogSpriteProps)
     return p;
   }, []);
 
-  const parsedPaths = useMemo(() => ({
-    shadow: Skia.Path.MakeFromSVGString(paths.shadow) ?? Skia.Path.Make(),
-    tail: Skia.Path.MakeFromSVGString(paths.tail) ?? Skia.Path.Make(),
-    body: Skia.Path.MakeFromSVGString(paths.body) ?? Skia.Path.Make(),
-    earBack: Skia.Path.MakeFromSVGString(paths.earBack) ?? Skia.Path.Make(),
-    head: Skia.Path.MakeFromSVGString(paths.head) ?? Skia.Path.Make(),
-    earFront: Skia.Path.MakeFromSVGString(paths.earFront) ?? Skia.Path.Make(),
-  }), [paths]);
+  const parsedPaths = useMemo(
+    () => ({
+      shadow: Skia.Path.MakeFromSVGString(paths.shadow) ?? Skia.Path.Make(),
+      tail: Skia.Path.MakeFromSVGString(paths.tail) ?? Skia.Path.Make(),
+      body: Skia.Path.MakeFromSVGString(paths.body) ?? Skia.Path.Make(),
+      earBack: Skia.Path.MakeFromSVGString(paths.earBack) ?? Skia.Path.Make(),
+      head: Skia.Path.MakeFromSVGString(paths.head) ?? Skia.Path.Make(),
+      earFront: Skia.Path.MakeFromSVGString(paths.earFront) ?? Skia.Path.Make(),
+    }),
+    [paths],
+  );
 
   const isSad = mood < 30;
 
@@ -109,13 +117,19 @@ export function DogSprite({ spriteId, coatColor, mood, outfit }: DogSpriteProps)
       {isSad ? (
         // Flat line for sad
         <Path
-          path={Skia.Path.MakeFromSVGString('M 84 108 Q 90 106 96 108') ?? Skia.Path.Make()}
+          path={
+            Skia.Path.MakeFromSVGString('M 84 108 Q 90 106 96 108') ??
+            Skia.Path.Make()
+          }
           paint={darkPaint}
         />
       ) : (
         // Curve for happy
         <Path
-          path={Skia.Path.MakeFromSVGString('M 84 106 Q 90 113 96 106') ?? Skia.Path.Make()}
+          path={
+            Skia.Path.MakeFromSVGString('M 84 106 Q 90 113 96 106') ??
+            Skia.Path.Make()
+          }
           paint={darkPaint}
         />
       )}

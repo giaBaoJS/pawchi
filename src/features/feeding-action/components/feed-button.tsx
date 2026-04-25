@@ -1,6 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { FEED_COST_BONES } from '@features/gamification/constants';
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, View } from 'react-native';
+import { AppText } from '@shared/components/ui/app-text';
 import { useCSSVariable } from 'uniwind';
 import { cn } from '@lib/cn';
 import { useFeeding } from '../hooks/use-feeding';
@@ -27,7 +28,9 @@ export function FeedButton({ onFed }: FeedButtonProps) {
     if (result.ok) onFed?.();
   }
 
-  const label = canFeed ? `Feed · ${FEED_COST_BONES}` : formatCooldown(cooldownRemainingMs);
+  const label = canFeed
+    ? `Feed · ${FEED_COST_BONES}`
+    : formatCooldown(cooldownRemainingMs);
 
   return (
     <Pressable
@@ -35,7 +38,9 @@ export function FeedButton({ onFed }: FeedButtonProps) {
       disabled={!canFeed}
       className={cn(
         'flex-1 rounded-3xl py-4 items-center justify-center gap-1 border',
-        canFeed ? 'bg-overlay border-border-soft' : 'bg-overlay-soft border-border-soft',
+        canFeed
+          ? 'bg-overlay border-border-soft'
+          : 'bg-overlay-soft border-border-soft',
       )}
     >
       <View className="flex-row items-center gap-1">
@@ -45,14 +50,14 @@ export function FeedButton({ onFed }: FeedButtonProps) {
           color={canFeed ? activeColor : mutedColor}
         />
       </View>
-      <Text
+      <AppText
         className={cn(
           'font-extrabold text-sm',
           canFeed ? 'text-foreground' : 'text-foreground-secondary',
         )}
       >
         {label}
-      </Text>
+      </AppText>
     </Pressable>
   );
 }

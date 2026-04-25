@@ -2,7 +2,8 @@ import { IconCard } from '@shared/components/ui/icon-card';
 import { KawaiiButton } from '@shared/components/ui/kawaii-button';
 import { KawaiiScreen } from '@shared/components/ui/kawaii-screen';
 import { router, useLocalSearchParams } from 'expo-router';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
+import { AppText } from '@shared/components/ui/app-text';
 
 function formatDuration(totalSec: number): string {
   const m = Math.floor(totalSec / 60);
@@ -34,24 +35,33 @@ export default function WalkSummaryScreen() {
             size="lg"
             tone={tooShort ? 'personality' : 'primary'}
           />
-          <Text className="text-foreground text-2xl font-extrabold -tracking-wide">
+          <AppText
+            fontFamily="heading"
+            className="text-foreground text-2xl -tracking-wide"
+          >
             {tooShort ? 'Walk too short' : 'Walk complete!'}
-          </Text>
+          </AppText>
         </View>
 
         <View className="bg-overlay border border-border-soft rounded-3xl p-5 gap-4">
           <Row label="Duration" value={formatDuration(duration)} />
           {distance != null ? (
-            <Row label="Distance" value={`${(distance / 1000).toFixed(2)} km`} />
+            <Row
+              label="Distance"
+              value={`${(distance / 1000).toFixed(2)} km`}
+            />
           ) : null}
           <Row label="Bones earned" value={tooShort ? '—' : `+${bones}`} />
           <Row label="EXP earned" value={tooShort ? '—' : `+${exp}`} />
         </View>
 
         {tooShort ? (
-          <Text className="text-foreground-secondary text-center text-sm font-medium">
+          <AppText
+            weight="medium"
+            className="text-foreground-secondary text-center text-sm"
+          >
             Walks under 1 minute don&apos;t count.
-          </Text>
+          </AppText>
         ) : null}
 
         <View className="flex-1" />
@@ -69,8 +79,12 @@ export default function WalkSummaryScreen() {
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <View className="flex-row items-center justify-between">
-      <Text className="text-foreground-secondary text-sm font-semibold">{label}</Text>
-      <Text className="text-foreground font-extrabold text-sm">{value}</Text>
+      <AppText weight="semibold" className="text-foreground-secondary text-sm">
+        {label}
+      </AppText>
+      <AppText weight="extrabold" className="text-foreground text-sm">
+        {value}
+      </AppText>
     </View>
   );
 }
